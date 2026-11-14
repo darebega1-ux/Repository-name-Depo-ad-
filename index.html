@@ -93,7 +93,6 @@ textarea{height:80px;resize:none}
 .editField label{font-size:13px;font-weight:700}
 .editField input,.editField textarea{margin-top:6px}
 .passBtn{background:#f5f5f5;border:1px solid #ddd;padding:10px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700}
-/* YENİ - BÖLMƏLƏR ALT-ALTA, QABAĞINDA İKON */
 .passListWrap{display:flex;flex-direction:column;gap:12px}
 .passRow{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #eee;border-radius:16px;padding:12px;width:100%}
 .passRow.locked{border-color:#fecaca;background:#fef2f2}
@@ -106,6 +105,7 @@ textarea{height:80px;resize:none}
 .passRowText span{font-size:12px;color:#666}
 .passRowBtns{display:flex;flex-direction:column;gap:6px}
 .passSmallBtn{padding:8px 10px;border-radius:10px;border:1px solid #ddd;background:#fff;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.recoveryBox{background:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:14px;margin-bottom:14px}
 </style>
 </head>
 <body>
@@ -250,11 +250,25 @@ textarea{height:80px;resize:none}
 <div id="personalList"></div>
 </div></div>
 
-<!-- ŞİFRƏ AYARLARI - ALT-ALTA + İKON -->
+<!-- ŞİFRƏ AYARLARI + GİZLİ SÖZ -->
 <div id="pagePass" style="display:none"><div class="box">
 <h2 style="margin:0 0 6px;font-size:18px">🔐 Bölmə Şifrələri</h2>
-<p style="font-size:13px;color:#888;margin:0 0 14px">Hər bölmə alt-alta yazılıb. Qabağındakı ikona bas:<br>🔓 <b>AÇIQ</b> ikona bas → şifrə təyin et, Yadda Saxla bas → 🔒 BAĞLI olur<br>🔒 <b>BAĞLI</b> ikona bas → şifrəni yaz → şifrə silinir, yenə 🔓 AÇIQ olur</p>
-<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px;font-size:13px;margin-bottom:14px">⚠️ Şifrəni yadda saxla! Şifrə yalnız sənin telefonunda saxlanılır.</div>
+<p style="font-size:13px;color:#888;margin:0 0 14px">Hər bölmə alt-alta. Qabağındakı ikona bas:<br>🔓 AÇIQ → şifrə yaz → Yadda Saxla → 🔒 BAĞLI<br>🔒 BAĞLI → şifrəni yaz → silinir → 🔓 AÇIQ</p>
+
+<div class="recoveryBox">
+<h3 style="margin:0 0 6px;font-size:15px">🆘 Şifrəni Unutsan - Gizli Söz</h3>
+<p style="font-size:12px;color:#555;margin:0 0 10px" id="recoveryStatus">Hələ Gizli Söz qoymamısan. Şifrəni unutsan bərpa edə bilməyəcəksən! İndi qoy.</p>
+<div style="display:flex;gap:8px">
+<input id="recoveryInput" placeholder="Gizli Söz yaz - məs: anamın adı" style="margin:0">
+<button onclick="saveRecoveryWord()" style="padding:12px 14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;white-space:nowrap">💾 Yadda Saxla</button>
+</div>
+<div style="font-size:12px;color:#666;margin-top:6px">Məs: uşaqlıq ləqəbin, ilk itin adı, sevdiyin yemək. Yalnız sən biləcəyin söz seç. Bu sözlə şifrəni sıfırlaya biləcəksən.</div>
+<div style="display:flex;gap:8px;margin-top:8px">
+<button class="passSmallBtn" onclick="changeRecoveryWord()">✏️ Gizli Sözü Dəyiş</button>
+<button class="passSmallBtn" style="background:#fee2e2" onclick="forgotAllWithRecovery()">🆘 Şifrəni unutdum - Gizli Sözlə Aç</button>
+</div>
+</div>
+
 <div id="passList" class="passListWrap"></div>
 <div style="display:flex;gap:8px;margin-top:14px">
 <button class="rangeBtn" style="background:#fee2e2" onclick="lockAllSections()">🔒 Hamısını Bağla</button>
@@ -262,7 +276,7 @@ textarea{height:80px;resize:none}
 </div>
 </div></div>
 
-<!-- İKONLA ŞİFRƏ QOYMA MODALI -->
+<!-- ŞİFRƏ QOYMA MODALI -->
 <div class="modal" id="setPassModal">
 <div class="modalCard">
 <div style="font-size:44px" id="setPassIcon">🔓</div>
@@ -273,6 +287,9 @@ textarea{height:80px;resize:none}
 <input id="setPass1" type="password" inputmode="numeric" placeholder="Məs: 1234" maxlength="8" style="font-size:20px;text-align:center;letter-spacing:4px">
 <label style="font-size:13px;font-weight:700">Şifrəni təkrarla</label>
 <input id="setPass2" type="password" inputmode="numeric" placeholder="Yenidən yaz" maxlength="8" style="font-size:20px;text-align:center;letter-spacing:4px">
+<label style="font-size:13px;font-weight:700">💡 İpucu (istəyə bağlı) - şifrəni xatırlamaq üçün</label>
+<input id="setPassHint" placeholder="Məs: doğum ilim" style="font-size:14px">
+<div style="font-size:12px;color:#666;margin-bottom:8px">İpucu şifrəni unutanda sənə göstəriləcək. Məs: "doğum ilim + ayım"</div>
 </div>
 <div style="display:flex;gap:8px">
 <button onclick="confirmSetPass()" style="flex:1;padding:13px;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">💾 Yadda Saxla</button>
@@ -281,18 +298,37 @@ textarea{height:80px;resize:none}
 </div>
 </div>
 
-<!-- BÖLMƏ KİLİD MODALI -->
+<!-- BÖLMƏ KİLİD MODALI + UNUTDUM -->
 <div class="modal" id="sectionLockModal">
 <div class="modalCard">
 <div style="font-size:44px">🔒</div>
 <h3 id="lockTitle">Bölmə Bağlıdır</h3>
 <p id="lockText">Açmaq üçün şifrəni yaz</p>
+<p id="lockHint" style="background:#fef9c3;border:1px solid #fde047;border-radius:10px;padding:8px;font-size:13px;display:none"></p>
 <input id="sectionLockInput" type="password" inputmode="numeric" placeholder="••••" style="font-size:22px;text-align:center;letter-spacing:6px;font-weight:900">
 <p id="lockError" style="color:#dc2626;font-size:13px;font-weight:700;display:none">❌ Şifrə səhvdir!</p>
 <div style="display:flex;gap:8px">
 <button onclick="doUnlockSection()" style="flex:1;padding:13px;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">🔓 Aç</button>
 <button onclick="cancelUnlock()" style="flex:1;padding:13px;background:#eee;border:none;border-radius:10px;font-weight:700;cursor:pointer">Ləğv et</button>
 </div>
+<button onclick="forgotOneSection()" style="width:100%;padding:12px;background:#fff;border:1px solid #ddd;border-radius:10px;font-weight:700;cursor:pointer;margin-top:8px">🆘 Şifrəni Unutdum? Gizli Sözlə Aç</button>
+<button onclick="showHint()" style="width:100%;padding:12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;font-weight:700;cursor:pointer;margin-top:8px">💡 İpucunu Göstər</button>
+</div>
+</div>
+
+<!-- GİZLİ SÖZLƏ BƏRPA MODALI -->
+<div class="modal" id="recoverModal">
+<div class="modalCard">
+<div style="font-size:44px">🆘</div>
+<h3 id="recoverTitle">Şifrəni Bərpa Et</h3>
+<p id="recoverText">Gizli Sözü yaz, şifrəni sıfırlayım</p>
+<input id="recoverInput" placeholder="Gizli Sözü yaz..." style="font-size:16px;text-align:center">
+<p id="recoverError" style="color:#dc2626;font-size:13px;font-weight:700;display:none">❌ Gizli Söz səhvdir!</p>
+<div style="display:flex;gap:8px">
+<button onclick="confirmRecover()" style="flex:1;padding:13px;background:#dc2626;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">✅ Təsdiqlə</button>
+<button onclick="closeRecover()" style="flex:1;padding:13px;background:#eee;border:none;border-radius:10px;font-weight:700;cursor:pointer">Ləğv et</button>
+</div>
+<div style="font-size:12px;color:#888;margin-top:8px">Gizli Sözü də unutmusansa, mənə yaz - gizli sıfırlama kodunu deyim.</div>
 </div>
 </div>
 
@@ -391,22 +427,26 @@ let currentCustIdx=-1; let highlightIdx=-1; let editIdx=-1; let editPersonalIdx=
 let oldPersonalPass = localStorage.getItem('personal_pass')||'';
 let sectionPass = JSON.parse(localStorage.getItem('section_pass')||'{}');
 if(oldPersonalPass && !sectionPass.personal){ sectionPass.personal=oldPersonalPass; localStorage.setItem('section_pass',JSON.stringify(sectionPass)); localStorage.removeItem('personal_pass'); }
+let sectionHint = JSON.parse(localStorage.getItem('section_hint')||'{}');
+let recoveryWord = localStorage.getItem('recovery_word')||'';
 let sectionUnlocked = {notes:false, salary:false, exp:false, personal:false};
 let pendingSection = '';
 let pendingSetSection = '';
+let recoverTarget = 'all';
 let currentTab = 'notes';
 let sectionNames = {notes:'📝 Qeydlər', salary:'💰 Maaş Hesablanması', exp:'💰 Gəlir / Xərc', personal:'🔒 Şəxsi Qeydlərim'};
 
 function todayKey(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function monthKey(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
 function showTab(t){
-if(t==='pass'){ doShowTab('pass'); renderPassList(); return; }
+if(t==='pass'){ doShowTab('pass'); renderPassList(); updateRecoveryUI(); return; }
 if(sectionPass[t] && !sectionUnlocked[t]){
 pendingSection=t;
 document.getElementById('lockTitle').innerText = sectionNames[t]+' Bağlıdır';
 document.getElementById('lockText').innerText = sectionNames[t]+' bölməsini açmaq üçün şifrəni yaz';
 document.getElementById('sectionLockInput').value='';
 document.getElementById('lockError').style.display='none';
+document.getElementById('lockHint').style.display='none';
 document.getElementById('sectionLockModal').classList.add('show');
 setTimeout(()=>document.getElementById('sectionLockInput').focus(),300);
 return;
@@ -438,31 +478,103 @@ document.getElementById('sectionLockInput').focus();
 }
 }
 function cancelUnlock(){ pendingSection=''; document.getElementById('sectionLockModal').classList.remove('show'); }
+function showHint(){
+let h = sectionHint[pendingSection]||'';
+if(!h) return alert('Bu bölmə üçün ipucu qoyulmayıb.');
+document.getElementById('lockHint').innerText = '💡 İpucu: ' + h;
+document.getElementById('lockHint').style.display='block';
+}
 function lockAllSections(){ Object.keys(sectionPass).forEach(k=>{ if(sectionPass[k]) sectionUnlocked[k]=false; }); alert('Hamısı bağlandı 🔒'); renderPassList(); }
 function unlockAllForNow(){ let any=false; Object.keys(sectionPass).forEach(k=>{ if(sectionPass[k]){ sectionUnlocked[k]=true; any=true; } }); if(!any) alert('Heç bir bölmədə şifrə yoxdur'); else alert('Hamısı bu dəfəlik açıldı ✅'); renderPassList(); }
 
-/* --- YENİ: İKONA BASANDA ŞİFRƏLƏ / AÇ --- */
+/* --- GİZLİ SÖZ --- */
+function updateRecoveryUI(){
+let el=document.getElementById('recoveryStatus');
+if(recoveryWord){ el.innerHTML='✅ Gizli Söz qoyulub. Şifrəni unutsan, Gizli Sözlə bərpa edə biləcəksən. Gizli Sözü heç kimə demə!'; el.style.color='#16a34a'; }
+else { el.innerHTML='⚠️ Hələ Gizli Söz qoymamısan. Şifrəni unutsan bərpa edə bilməyəcəksən! İndi qoy.'; el.style.color='#dc2626'; }
+}
+function saveRecoveryWord(){
+let v=document.getElementById('recoveryInput').value.trim();
+if(v.length<3) return alert('Gizli Söz ən azı 3 hərf olmalıdır! Məs: anamın adı');
+recoveryWord=v.toLowerCase();
+localStorage.setItem('recovery_word', recoveryWord);
+document.getElementById('recoveryInput').value='';
+alert('Gizli Söz yadda saxlanıldı ✅\nŞifrəni unutsan, bu sözlə bərpa edəcəksən. Unutma: ' + v);
+updateRecoveryUI();
+}
+function changeRecoveryWord(){
+let oldP=prompt('Köhnə Gizli Sözü yaz:');
+if(oldP===null) return;
+if(oldP.trim().toLowerCase()!==recoveryWord) return alert('Köhnə Gizli Söz səhvdir!');
+let np=prompt('Yeni Gizli Söz yaz:');
+if(!np || np.trim().length<3) return alert('Ən azı 3 hərf olmalıdır!');
+recoveryWord=np.trim().toLowerCase();
+localStorage.setItem('recovery_word', recoveryWord);
+alert('Gizli Söz dəyişdirildi ✅');
+updateRecoveryUI();
+}
+function forgotOneSection(){
+if(!recoveryWord) return alert('Gizli Söz qoyulmayıb!\nƏvvəlcə Şifrə Ayarları-na girib Gizli Söz qoy. O olmadan şifrəni bərpa etmək olmur.');
+recoverTarget = pendingSection;
+document.getElementById('recoverTitle').innerText = sectionNames[pendingSection] + ' - Bərpa Et';
+document.getElementById('recoverText').innerText = 'Gizli Sözü yaz, bu bölmənin şifrəsini sıfırlayım';
+document.getElementById('sectionLockModal').classList.remove('show');
+document.getElementById('recoverInput').value='';
+document.getElementById('recoverError').style.display='none';
+document.getElementById('recoverModal').classList.add('show');
+}
+function forgotAllWithRecovery(){
+if(!recoveryWord) return alert('Əvvəlcə Gizli Söz qoy! Yuxarıdakı xanaya yaz, Yadda Saxla bas.');
+recoverTarget='all';
+document.getElementById('recoverTitle').innerText='Bütün Şifrələri Sıfırla';
+document.getElementById('recoverText').innerText='Gizli Sözü yaz, bütün bölmələrin şifrəsini silim';
+document.getElementById('recoverInput').value='';
+document.getElementById('recoverError').style.display='none';
+document.getElementById('recoverModal').classList.add('show');
+}
+function confirmRecover(){
+let v=document.getElementById('recoverInput').value.trim().toLowerCase();
+if(v!==recoveryWord){ document.getElementById('recoverError').style.display='block'; return; }
+if(recoverTarget==='all'){
+sectionPass={}; sectionUnlocked={notes:false,salary:false,exp:false,personal:false};
+localStorage.setItem('section_pass', JSON.stringify(sectionPass));
+alert('✅ Bütün şifrələr silindi! İndi bütün bölmələr AÇIQdır 🔓\nİstəsən yenidən şifrə qoya bilərsən.');
+} else {
+delete sectionPass[recoverTarget];
+sectionUnlocked[recoverTarget]=false;
+localStorage.setItem('section_pass', JSON.stringify(sectionPass));
+alert('✅ ' + sectionNames[recoverTarget] + ' şifrəsi silindi! Bölmə indi AÇIQdır 🔓\nİstəsən yenidən şifrə qoya bilərsən.');
+}
+document.getElementById('recoverModal').classList.remove('show');
+pendingSection='';
+renderPassList();
+doShowTab('pass');
+}
+function closeRecover(){ document.getElementById('recoverModal').classList.remove('show'); }
+
+/* --- İKONLA ŞİFRƏLƏ --- */
 function toggleLockIcon(sec){
 let has = !!sectionPass[sec];
 if(!has){
-  // AÇIQ idi -> Şifrələ
   pendingSetSection = sec;
   document.getElementById('setPassIcon').innerText='🔓';
   document.getElementById('setPassTitle').innerText = sectionNames[sec] + ' - Şifrə Təyin Et';
   document.getElementById('setPassText').innerText = 'Bu bölməni bağlamaq üçün şifrə yaz. Sonra Yadda Saxla bas.';
   document.getElementById('setPass1').value='';
   document.getElementById('setPass2').value='';
+  document.getElementById('setPassHint').value='';
   document.getElementById('setPassModal').classList.add('show');
   setTimeout(()=>document.getElementById('setPass1').focus(),300);
 } else {
-  // BAĞLI idi -> Şifrəni yaz, silinsin, AÇIQ olsun
   let p = prompt(sectionNames[sec] + ' şifrəlidir 🔒\nŞifrəni silmək və AÇIQ etmək üçün şifrəni yaz:');
   if(p===null) return;
-  if(p.trim() !== sectionPass[sec]) return alert('❌ Şifrə səhvdir!');
+  if(p.trim() !== sectionPass[sec]) return alert('❌ Şifrə səhvdir! Unutmusansa, "Şifrəni Unutdum" bas, Gizli Sözlə aç.');
   if(!confirm(sectionNames[sec] + ' - şifrə silinsin? Bölmə yenə şifrəsiz - AÇIQ olacaq.')) return;
   delete sectionPass[sec];
+  delete sectionHint[sec];
   sectionUnlocked[sec]=false;
   localStorage.setItem('section_pass', JSON.stringify(sectionPass));
+  localStorage.setItem('section_hint', JSON.stringify(sectionHint));
   alert('✅ Şifrə silindi. Bölmə indi AÇIQdır 🔓');
   renderPassList();
 }
@@ -470,11 +582,22 @@ if(!has){
 function confirmSetPass(){
 let p1=document.getElementById('setPass1').value.trim();
 let p2=document.getElementById('setPass2').value.trim();
+let hint=document.getElementById('setPassHint').value.trim();
 if(p1.length<4) return alert('Şifrə ən azı 4 simvol olmalıdır!');
 if(p1!==p2) return alert('İki şifrə eyni deyil! Yenidən yaz.');
+if(!recoveryWord){
+  if(confirm('⚠️ Hələ Gizli Söz qoymamısan!\nŞifrəni unutsan bərpa edə bilməyəcəksən.\nİndi Gizli Söz qoymaq istəyirsən?')){
+    document.getElementById('setPassModal').classList.remove('show');
+    doShowTab('pass');
+    setTimeout(()=>{ document.getElementById('recoveryInput').focus(); alert('Yuxarıdakı Gizli Söz xanasına söz yaz, Yadda Saxla bas. Sonra yenidən şifrə qoy.'); },300);
+    return;
+  }
+}
 sectionPass[pendingSetSection]=p1;
+if(hint) sectionHint[pendingSetSection]=hint;
 sectionUnlocked[pendingSetSection]=false;
 localStorage.setItem('section_pass', JSON.stringify(sectionPass));
+localStorage.setItem('section_hint', JSON.stringify(sectionHint));
 document.getElementById('setPassModal').classList.remove('show');
 alert(sectionNames[pendingSetSection] + ' şifrələndi ✅\nİndi 🔒 BAĞLI-dır. Girəndə şifrə soruşulacaq.');
 renderPassList();
@@ -510,7 +633,7 @@ pendingSetSection=sec;
 document.getElementById('setPassIcon').innerText='🔑';
 document.getElementById('setPassTitle').innerText = sectionNames[sec] + ' - Şifrəni Dəyiş';
 document.getElementById('setPassText').innerText = 'Yeni şifrəni yaz, Yadda Saxla bas.';
-document.getElementById('setPass1').value=''; document.getElementById('setPass2').value='';
+document.getElementById('setPass1').value=''; document.getElementById('setPass2').value=''; document.getElementById('setPassHint').value=sectionHint[sec]||'';
 document.getElementById('setPassModal').classList.add('show');
 }
 function removeSectionPass(sec){ toggleLockIcon(sec); }
@@ -645,7 +768,7 @@ document.getElementById('cPersonal').innerText='('+personalNotes.length+')';
 document.getElementById('personalList').innerHTML=!filtered.length?'<div class="empty">Hələ şəxsi qeyd yoxdur</div>':filtered.map(n=>{let idx=personalNotes.indexOf(n);return `<div class="note personal ${n.done?'done':''}"><h3>💜 ${n.title} ${n.done?'✅':''}</h3><p>${n.text}</p><small>${n.date}</small><div class="btns">${n.done?`<button class="backBtn" onclick="togglePersonal(${idx})">↩ Geri Qaytar</button>`:`<button class="okBtn" onclick="togglePersonal(${idx})">✅ Tamamlandı</button>`}<button class="editBtn" onclick="openPersonalEdit(${idx})">✏️ Düzəliş</button><button class="delBtn" onclick="delPersonal(${idx})">Sil</button></div></div>`}).join('');
 }
 document.getElementById('sectionLockInput').addEventListener('keydown', function(e){ if(e.key==='Enter') doUnlockSection(); });
-loadAutoInputs();calcPreview();render();renderExp();renderPersonal();renderPassList();
+loadAutoInputs();calcPreview();render();renderExp();renderPersonal();renderPassList();updateRecoveryUI();
 setTimeout(()=>{checkRemind();checkCustomerRemind(false);}, 800);
 setInterval(()=>{ checkCustomerRemind(false); if(checkAutoDelete()){} else { let autoMs=getAutoMs(); if(autoMs>0 && notes.some(n=>n.done)) render(); } }, 10000);
 </script>

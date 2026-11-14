@@ -20,6 +20,7 @@ body{margin:0;background:#f2f2f2;overflow-x:hidden}
 .iconSalary{background:linear-gradient(135deg,#16a34a,#4ade80)}
 .iconMoney{background:linear-gradient(135deg,#f59e0b,#f97316)}
 .iconLock{background:linear-gradient(135deg,#7c3aed,#ec4899)}
+.iconKey{background:linear-gradient(135deg,#64748b,#334155)}
 .iconIdea{background:linear-gradient(135deg,#25D366,#128C7E)}
 .box{max-width:620px;margin:auto;background:#fff;border-radius:15px;padding:18px;margin-top:15px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
 input,textarea,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin-bottom:10px;font-size:15px;outline:none}
@@ -97,12 +98,12 @@ textarea{height:80px;resize:none}
 .editField{text-align:left}
 .editField label{font-size:13px;font-weight:700}
 .editField input,.editField textarea{margin-top:6px}
-/* TƏKLİFLƏR */
 .suggestHero{background:linear-gradient(135deg,#25D366,#128C7E);border-radius:16px;padding:18px;color:#fff;text-align:center}
 .suggestHero h2{margin:0 0 6px;font-size:20px}
 .suggestHero p{margin:0;font-size:14px;opacity:.95}
 .waBig{display:block;text-align:center;background:#25D366;color:#fff;padding:15px;border-radius:12px;font-weight:800;font-size:17px;text-decoration:none;margin-top:12px}
 .waBig small{display:block;font-weight:400;font-size:13px;margin-top:3px}
+.passCard{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:13px;margin-top:12px}
 </style>
 </head>
 <body>
@@ -116,6 +117,7 @@ textarea{height:80px;resize:none}
 <button class="tabBtn" id="tabSalary" onclick="showTab('salary')"><span class="tabIcon iconSalary">💵</span>Maaş Hesablanması</button>
 <button class="tabBtn" id="tabExp" onclick="showTab('exp')"><span class="tabIcon iconMoney">💰</span>Gəlir / Xərc</button>
 <button class="tabBtn" id="tabPersonal" onclick="showTab('personal')"><span class="tabIcon iconLock">🔒</span>Şəxsi Qeydlərim</button>
+<button class="tabBtn" id="tabPass" onclick="showTab('pass')"><span class="tabIcon iconKey">🔑</span>Şifrə</button>
 <button class="tabBtn" id="tabSuggest" onclick="showTab('suggest')"><span class="tabIcon iconIdea">💡</span>Təkliflər</button>
 </div>
 
@@ -250,26 +252,38 @@ textarea{height:80px;resize:none}
 <div id="personalList"></div>
 </div></div>
 
+<!-- QAYTARILAN - ŞİFRƏLƏR -->
+<div id="pagePass" style="display:none"><div class="box">
+<h2 style="margin:0 0 6px;font-size:18px;display:flex;align-items:center;gap:10px"><span class="tabIcon iconKey" style="width:38px;height:38px;font-size:20px">🔑</span> Şifrələr</h2>
+<p style="font-size:13px;color:#888;margin:0 0 12px">Bütün şifrələrin burada, heç yerə getməyib. Köhnələrin də çıxacaq.</p>
+<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:10px;font-size:13px;color:#334155">🔑 Instagram, Gmail, Wi-Fi, kart şifrəsi - hamısını bura yaz, unutma.</div>
+<input id="passTitle" placeholder="Haradandır? Məs: Instagram / Gmail / Wi-Fi">
+<input id="passUser" placeholder="İstifadəçi adı / email (istəyə bağlı)">
+<input id="passValue" placeholder="Şifrə / kod...">
+<button class="addBtn" style="background:#334155" onclick="addPass()">+ Şifrəni Saxla</button>
+<input id="searchPass" placeholder="🔍 Şifrələrdə axtar... Məs: Instagram" oninput="renderPass()" style="margin-top:14px">
+<div id="passList"></div>
+</div></div>
+
 <!-- TƏKLİFLƏR -->
 <div id="pageSuggest" style="display:none"><div class="box">
 <div class="suggestHero">
 <div style="font-size:42px">💡</div>
 <h2>Təkliflər Bölməsi</h2>
-<p>Fikrin var? Proqramda nəyi dəyişək? Nə əlavə edək? Bura yaz, mənə çatsın!</p>
+<p>Fikrin var? Dükkanda nəyi dəyişək? Nə əlavə edək? Bura yaz, mənə çatsın!</p>
 </div>
-
 <input id="suggestName" placeholder="Adın (istəyə bağlı) - Məs: Elvin" style="margin-top:14px">
 <select id="suggestTopic">
 <option>💡 Ümumi təklif</option>
+<option>🛒 Hansı mal gətirim?</option>
+<option>💰 Qiymətlə bağlı</option>
+<option>🏪 Dükkanla bağlı</option>
 <option>📱 Proqramla bağlı</option>
 <option>❤️ Təşəkkür / Tərif</option>
 </select>
-<textarea id="suggestText" placeholder="Təklifini bura yaz..." style="height:110px"></textarea>
-
+<textarea id="suggestText" placeholder="Təklifini bura yaz... Məs: Sabah təzə çörək gətir, çox adam soruşur..." style="height:110px"></textarea>
 <a class="waBig" href="#" onclick="sendSuggest(event)">💬 WhatsApp-la Göndər<small>Təklifin srazu mənə yazılacaq - +994 55 800 16 01</small></a>
-
 <a href="tel:+994558001601" style="display:block;text-align:center;background:#111;color:#fff;padding:14px;border-radius:12px;font-weight:700;text-decoration:none;margin-top:10px">📞 Zəng Et - +994 55 800 16 01</a>
-
 <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:12px;margin-top:12px;font-size:13px;color:#166534;text-align:center">
 ✅ Göndər basan kimi WhatsApp açılır, təklifin hazır yazılmış olur.<br>Sən sadəcə <b>Göndər ➤</b> basırsan.
 </div>
@@ -309,7 +323,7 @@ textarea{height:80px;resize:none}
 <button onclick="goToNote()" style="flex:1;padding:13px;background:#000;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">📝 Qeydə Get</button>
 <button onclick="closeCustomerModal(true)" style="flex:1;padding:13px;background:#22c55e;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">✅ Tamamlandı</button>
 </div>
-<button onclick="closeCustomerModal(false)" style="width:100%;padding:13px;background:#f59e0b;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;margin-top:8px">⏰ Sonra Xatırlat - 1 saat</button>
+<button onclick="closeCustomerModal(false)" style="width:100%;padding:13px;background:#f59e0b;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;margin-top:8px">⏰ Sonra Xatırlat - 2 rol</button>
 </div>
 </div>
 
@@ -356,6 +370,7 @@ textarea{height:80px;resize:none}
 <div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box2','arrow2')"><span>💵 Maaş Hesablanması</span><span id="arrow2">▼</span></div><div class="oneBoxBody" id="box2"><button class="subBtn" onclick="showTab('salary');closeMenu()">💵 Maaş Hesablanması</button></div></div>
 <div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box3','arrow3')"><span>💰 Gəlir / Xərc</span><span id="arrow3">▼</span></div><div class="oneBoxBody" id="box3"><button class="subBtn" onclick="showTab('exp');closeMenu()">💰 Gəlir / Xərc Yaz</button><button class="subBtn" onclick="showTab('exp');closeMenu()">📅 Bu ay <span id="cExpMonth"></span></button><button class="subBtn" onclick="showTab('exp');closeMenu()">📊 Bu gün <span id="cExpToday"></span></button></div></div>
 <div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box4','arrow4')"><span>🔒 Şəxsi Qeydlərim</span><span id="arrow4">▼</span></div><div class="oneBoxBody" id="box4"><button class="subBtn" onclick="showTab('personal');closeMenu()">🔒 Şəxsi Qeydlərim <span id="cPersonal"></span></button></div></div>
+<div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box6','arrow6')"><span>🔑 Şifrələr</span><span id="arrow6">▼</span></div><div class="oneBoxBody" id="box6"><button class="subBtn" onclick="showTab('pass');closeMenu()">🔑 Şifrələrim <span id="cPass"></span></button></div></div>
 <div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box5','arrow5')"><span>💡 Təkliflər</span><span id="arrow5">▼</span></div><div class="oneBoxBody" id="box5"><button class="subBtn" onclick="showTab('suggest');closeMenu()">💡 Təklif Yaz - WhatsApp</button></div></div>
 <input id="search" placeholder="🔍 Qeydlərdə axtar..." oninput="render()" style="padding:10px;border:1px solid #ddd;border-radius:10px;width:100%">
 </div>
@@ -365,6 +380,9 @@ let notes = JSON.parse(localStorage.getItem('sade_notes')||'[]');
 let salaries = JSON.parse(localStorage.getItem('salaries_v1')||'[]');
 let expenses = JSON.parse(localStorage.getItem('expenses_v1')||'[]');
 let personalNotes = JSON.parse(localStorage.getItem('personal_notes')||'[]');
+let passes = JSON.parse(localStorage.getItem('pass_v1')||'[]');
+// köhnə şifrə formatını da oxu - əgər başqa adda saxlanılıbsa
+if(!passes.length){ let oldPass = JSON.parse(localStorage.getItem('passwords_v1')||'[]'); if(oldPass.length) passes = oldPass; }
 expenses = expenses.map(e=>({...e, type:e.type||'expense'}));
 let filter='all';
 let rangeActive=false;
@@ -378,14 +396,15 @@ let editPersonalIdx = -1;
 function todayKey(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function monthKey(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
 function showTab(t){
-let map={notes:'Notes',salary:'Salary',exp:'Exp',personal:'Personal',suggest:'Suggest'};
-['notes','salary','exp','personal','suggest'].forEach(x=>document.getElementById('page'+map[x]).style.display=x===t?'block':'none');
+let map={notes:'Notes',salary:'Salary',exp:'Exp',personal:'Personal',pass:'Pass',suggest:'Suggest'};
+['notes','salary','exp','personal','pass','suggest'].forEach(x=>document.getElementById('page'+map[x]).style.display=x===t?'block':'none');
 document.getElementById('tabNotes').classList.toggle('active',t==='notes');
 document.getElementById('tabSalary').classList.toggle('active',t==='salary');
 document.getElementById('tabExp').classList.toggle('active',t==='exp');
 document.getElementById('tabPersonal').classList.toggle('active',t==='personal');
+document.getElementById('tabPass').classList.toggle('active',t==='pass');
 document.getElementById('tabSuggest').classList.toggle('active',t==='suggest');
-render();renderExp();renderPersonal();if(t==='notes'){checkRemind();checkCustomerRemind(false);}
+render();renderExp();renderPersonal();renderPass();if(t==='notes'){checkRemind();checkCustomerRemind(false);}
 }
 function sendSuggest(e){
 e.preventDefault();
@@ -401,6 +420,26 @@ let url='https://wa.me/994558001601?text='+encodeURIComponent(msg);
 window.open(url,'_blank');
 document.getElementById('suggestText').value='';
 alert('WhatsApp açıldı ✅\nOrda sadəcə Göndər bas, mənə çatsın!');
+}
+// ŞİFRƏLƏR - QAYTARILDI
+function addPass(){
+let t=document.getElementById('passTitle').value.trim();
+let u=document.getElementById('passUser').value.trim();
+let v=document.getElementById('passValue').value.trim();
+if(!t||!v) return alert('Haradandır və şifrəni yaz!');
+passes.unshift({title:t,user:u||'',value:v,date:new Date().toLocaleString('az-AZ')});
+localStorage.setItem('pass_v1',JSON.stringify(passes));
+localStorage.setItem('passwords_v1',JSON.stringify(passes));
+document.getElementById('passTitle').value='';document.getElementById('passUser').value='';document.getElementById('passValue').value='';
+renderPass();alert('Şifrə saxlanıldı ✅');
+}
+function delPass(i){if(confirm('Bu şifrə silinsin?')){passes.splice(i,1);localStorage.setItem('pass_v1',JSON.stringify(passes));localStorage.setItem('passwords_v1',JSON.stringify(passes));renderPass();}}
+function copyPass(i){let v=passes[i].value; if(navigator.clipboard){navigator.clipboard.writeText(v).then(()=>alert('Kopyalandı ✅'));}else{prompt('Kopyala:',v);}}
+function renderPass(){
+let q=(document.getElementById('searchPass').value||'').toLowerCase();
+let filtered=passes.filter(p=>(p.title+' '+(p.user||'')+' '+p.value).toLowerCase().includes(q));
+let cEl=document.getElementById('cPass'); if(cEl) cEl.innerText='('+passes.length+')';
+document.getElementById('passList').innerHTML=!filtered.length?'<div class="empty">Hələ şifrə yoxdur - yuxarıdan əlavə elə</div>':filtered.map(p=>{let idx=passes.indexOf(p);return `<div class="passCard"><b>🔑 ${p.title}</b>${p.user?`<div style="color:#666;font-size:13px">👤 ${p.user}</div>`:''}<div style="margin-top:8px;background:#f8f8f8;padding:10px;border-radius:8px;font-weight:700;word-break:break-all">${p.value}</div><small>${p.date||''}</small><div style="display:flex;gap:8px;margin-top:8px"><button class="editBtn" style="background:#334155" onclick="copyPass(${idx})">📋 Kopyala</button><button class="delBtn" onclick="delPass(${idx})">Sil</button></div></div>`}).join('');
 }
 function openMenu(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show')}
 function closeMenu(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
@@ -607,7 +646,7 @@ let filtered=personalNotes.filter(n=>(n.title+n.text).toLowerCase().includes(q))
 document.getElementById('cPersonal').innerText='('+personalNotes.length+')';
 document.getElementById('personalList').innerHTML=!filtered.length?'<div class="empty">Hələ şəxsi qeyd yoxdur</div>':filtered.map(n=>{let idx=personalNotes.indexOf(n);return `<div class="note personal ${n.done?'done':''}"><h3>${n.title} ${n.done?'✅':''}</h3><p>${n.text}</p><small>${n.date}</small><div class="btns"><button class="okBtn" style="background:${n.done?'#f59e0b':'#7c3aed'}" onclick="togglePersonal(${idx})">${n.done?'↩ Geri Qaytar':'✅ Tamamlandı'}</button><button class="editBtn" style="background:#7c3aed" onclick="openPersonalEdit(${idx})">✏️ Düzəliş</button><button class="delBtn" onclick="delPersonal(${idx})">Sil</button></div></div>`}).join('');
 }
-loadAutoInputs();calcPreview();render();renderExp();renderPersonal();
+loadAutoInputs();calcPreview();render();renderExp();renderPersonal();renderPass();
 setTimeout(()=>{checkRemind();checkCustomerRemind(false);}, 800);
 setInterval(()=>{ checkCustomerRemind(false); if(checkAutoDelete()){} else { let autoMs=getAutoMs(); if(autoMs>0 && notes.some(n=>n.done)) render(); } }, 10000);
 </script>

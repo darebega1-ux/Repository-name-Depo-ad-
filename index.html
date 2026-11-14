@@ -92,6 +92,9 @@ textarea{height:80px;resize:none}
 .editField{text-align:left}
 .editField label{font-size:13px;font-weight:700}
 .editField input,.editField textarea{margin-top:6px}
+.lockBox{background:#faf5ff;border:2px solid #a855f7;border-radius:16px;padding:22px;text-align:center}
+.lockBox input{font-size:22px;text-align:center;letter-spacing:6px;font-weight:900}
+.passBtn{background:#f5f5f5;border:1px solid #ddd;padding:10px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700}
 </style>
 </head>
 <body>
@@ -99,7 +102,7 @@ textarea{height:80px;resize:none}
 <div class="topbar">
 <div class="topRow">
 <button class="menuBtn" onclick="openMenu()">☰</button>
-<h1>ŞƏXSİM</h1>
+<h1>🛒 Dükkan</h1>
 </div>
 <div class="tabRow">
 <button class="tabBtn active" id="tabNotes" onclick="showTab('notes')">Qeydlər</button>
@@ -109,7 +112,6 @@ textarea{height:80px;resize:none}
 </div>
 </div>
 
-<!-- QEYDLƏR -->
 <div id="pageNotes"><div class="box">
 <input id="title" placeholder="Nə qeyd edirsən? Məs: Müştəriyə süd...">
 <textarea id="text" placeholder="Ətraflı yaz..."></textarea>
@@ -142,7 +144,6 @@ textarea{height:80px;resize:none}
 </div>
 <div id="list"></div></div></div>
 
-<!-- MAAŞ HESABLANMASI -->
 <div id="pageSalary" style="display:none"><div class="box">
 <h2 style="margin:0 0 12px;font-size:18px">💰 Maaş Hesablanması</h2>
 <input id="empName" placeholder="İşçinin adı: Məs: Cabrayil">
@@ -154,7 +155,6 @@ textarea{height:80px;resize:none}
 <button class="addBtn" style="background:#22c55e;margin-top:12px" onclick="saveSalary()">✓ Maaşı Yadda Saxla</button>
 <div id="salaryList"></div></div></div>
 
-<!-- GƏLİR / XƏRC -->
 <div id="pageExp" style="display:none"><div class="box">
 <h2 style="margin:0 0 6px;font-size:18px">💰 Gəlir / Xərc</h2>
 <p style="font-size:12px;color:#888;margin:0 0 12px" id="todayLabel"></p>
@@ -228,19 +228,53 @@ textarea{height:80px;resize:none}
 <div id="expList"></div>
 </div></div>
 
-<!-- ŞƏXSİ QEYDLƏRİM -->
+<!-- ŞƏXSİ QEYDLƏRİM - ŞİFRƏLİ -->
 <div id="pagePersonal" style="display:none"><div class="box">
 <h2 style="margin:0 0 6px;font-size:18px">🔒 Şəxsi Qeydlərim</h2>
+
+<!-- ŞİFRƏ QOYULMAYIBSA - QURMA EKRANI -->
+<div id="personalSetup" style="display:none">
+<div class="lockBox">
+<div style="font-size:44px">🔐</div>
+<h3 style="margin:8px 0">Şəxsi Qeydlərə Şifrə Qoy</h3>
+<p style="font-size:13px;color:#666">Bu şifrəni yalnız sən biləcəksən. Hər dəfə bura girəndə bu şifrə soruşulacaq.<br>Yadda qalan bir şifrə seç, məs: 1234</p>
+<input id="newPass1" type="password" inputmode="numeric" placeholder="Yeni şifrə yaz" maxlength="8">
+<input id="newPass2" type="password" inputmode="numeric" placeholder="Yenidən yaz - təkrarla" maxlength="8">
+<button class="addBtn" style="background:#7c3aed" onclick="createPersonalPass()">🔐 Şifrəni Yadda Saxla</button>
+<p style="font-size:12px;color:#999;margin-top:8px">Şifrəni unutma! Unutsan qeydlər açılmayacaq. Yadında saxlayacağın şifrə seç.</p>
+</div>
+</div>
+
+<!-- ŞİFRƏ VARSA - KİLİD EKRANI -->
+<div id="personalLocked" style="display:none">
+<div class="lockBox">
+<div style="font-size:44px">🔒</div>
+<h3 style="margin:8px 0">Şəxsi Qeydlər Bağlıdır</h3>
+<p style="font-size:13px;color:#666">Açmaq üçün şifrəni yaz</p>
+<input id="unlockPass" type="password" inputmode="numeric" placeholder="••••" maxlength="8">
+<button class="addBtn" style="background:#7c3aed" onclick="unlockPersonal()">🔓 Aç</button>
+<button class="passBtn" style="width:100%;margin-top:8px" onclick="forgotPass()">Şifrəni unutdum?</button>
+<p id="unlockError" style="color:#dc2626;font-size:13px;font-weight:700;display:none">❌ Şifrə səhvdir, yenidən yaz!</p>
+</div>
+</div>
+
+<!-- AÇIQDIR - QEYDLƏR -->
+<div id="personalContent" style="display:none">
 <p style="font-size:13px;color:#888;margin:0 0 12px">Bura yalnız sənin üçündür. Dükkan qeydlərindən ayrı saxlanılır.</p>
-<div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:12px;padding:12px;margin-bottom:10px;font-size:13px;color:#6b21a8">💜 Şəxsi işlərin, fikirlərin, parolların yox - sadəcə öz qeydlərin. Heç kim görmür, dükkan səhifəsində çıxmir.</div>
+<div style="display:flex;gap:8px;margin-bottom:10px">
+<button class="passBtn" style="flex:1" onclick="changePersonalPass()">🔑 Şifrəni Dəyiş</button>
+<button class="passBtn" style="flex:1" onclick="lockPersonal()">🔒 Bağla</button>
+<button class="passBtn" style="flex:1;background:#fee2e2;border-color:#fecaca" onclick="removePersonalPass()">🗑️ Şifrəni Sil</button>
+</div>
 <input id="personalTitle" placeholder="Başlıq: Məs: Sabah həkimə get...">
 <textarea id="personalText" placeholder="Ətraflı yaz..."></textarea>
 <button class="addBtn" style="background:#7c3aed" onclick="addPersonal()">+ Şəxsi Qeyd Əlavə Et</button>
 <input id="searchPersonal" placeholder="🔍 Şəxsi qeydlərdə axtar..." oninput="renderPersonal()" style="margin-top:14px">
 <div id="personalList"></div>
+</div>
+
 </div></div>
 
-<!-- 24 SAAT XƏBƏRDARLIQ -->
 <div class="modal" id="remindModal">
 <div class="modalCard">
 <div style="font-size:40px">🔔</div>
@@ -255,7 +289,6 @@ textarea{height:80px;resize:none}
 </div>
 </div>
 
-<!-- MÜŞTƏRİ XATIRLATMA -->
 <div class="modal" id="customerModal">
 <div class="modalCard" style="border:3px solid #facc15">
 <div style="font-size:42px">🔔</div>
@@ -280,7 +313,6 @@ textarea{height:80px;resize:none}
 </div>
 </div>
 
-<!-- QEYD DÜZƏLİŞ MODAL -->
 <div class="modal" id="editModal">
 <div class="modalCard" style="text-align:left">
 <h3 style="text-align:center">✏️ Qeydi Düzəlt</h3>
@@ -300,7 +332,6 @@ textarea{height:80px;resize:none}
 </div>
 </div>
 
-<!-- ŞƏXSİ QEYD DÜZƏLİŞ MODAL -->
 <div class="modal" id="editPersonalModal">
 <div class="modalCard" style="text-align:left">
 <h3 style="text-align:center">✏️ Şəxsi Qeydi Düzəlt</h3>
@@ -343,6 +374,9 @@ let currentCustIdx = -1;
 let highlightIdx = -1;
 let editIdx = -1;
 let editPersonalIdx = -1;
+let personalUnlocked = false;
+let personalPass = localStorage.getItem('personal_pass') || '';
+
 function todayKey(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function monthKey(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
 function showTab(t){
@@ -352,7 +386,64 @@ document.getElementById('tabNotes').classList.toggle('active',t==='notes');
 document.getElementById('tabSalary').classList.toggle('active',t==='salary');
 document.getElementById('tabExp').classList.toggle('active',t==='exp');
 document.getElementById('tabPersonal').classList.toggle('active',t==='personal');
+if(t==='personal'){ updatePersonalView(); }
 render();renderExp();renderPersonal();if(t==='notes'){checkRemind();checkCustomerRemind(false);}
+}
+function updatePersonalView(){
+let setup=document.getElementById('personalSetup');
+let locked=document.getElementById('personalLocked');
+let content=document.getElementById('personalContent');
+if(!personalPass){
+setup.style.display='block'; locked.style.display='none'; content.style.display='none';
+} else if(!personalUnlocked){
+setup.style.display='none'; locked.style.display='block'; content.style.display='none';
+document.getElementById('unlockPass').value='';
+document.getElementById('unlockError').style.display='none';
+setTimeout(()=>document.getElementById('unlockPass').focus(),300);
+} else {
+setup.style.display='none'; locked.style.display='none'; content.style.display='block';
+}
+}
+function createPersonalPass(){
+let p1=document.getElementById('newPass1').value.trim();
+let p2=document.getElementById('newPass2').value.trim();
+if(p1.length<4) return alert('Şifrə ən azı 4 rəqəm / hərf olmalıdır!');
+if(p1!==p2) return alert('İki şifrə eyni deyil! Yenidən yaz.');
+personalPass=p1;
+localStorage.setItem('personal_pass',p1);
+personalUnlocked=true;
+document.getElementById('newPass1').value='';document.getElementById('newPass2').value='';
+alert('Şifrə yadda saxlanıldı ✅\nİndi hər dəfə Şəxsi Qeydlərə girəndə bu şifrə soruşulacaq.');
+updatePersonalView();renderPersonal();
+}
+function unlockPersonal(){
+let v=document.getElementById('unlockPass').value.trim();
+if(v===personalPass){ personalUnlocked=true; updatePersonalView(); renderPersonal(); }
+else{ document.getElementById('unlockError').style.display='block'; document.getElementById('unlockPass').value=''; document.getElementById('unlockPass').focus(); }
+}
+function lockPersonal(){ personalUnlocked=false; updatePersonalView(); }
+function changePersonalPass(){
+let oldP=prompt('Köhnə şifrəni yaz:');
+if(oldP===null) return;
+if(oldP!==personalPass) return alert('Köhnə şifrə səhvdir!');
+let np=prompt('Yeni şifrəni yaz (ən azı 4 simvol):');
+if(!np || np.length<4) return alert('Şifrə ən azı 4 simvol olmalıdır!');
+let np2=prompt('Yeni şifrəni yenidən yaz:');
+if(np!==np2) return alert('Şifrələr eyni deyil!');
+personalPass=np; localStorage.setItem('personal_pass',np);
+alert('Şifrə dəyişdirildi ✅');
+}
+function removePersonalPass(){
+let p=prompt('Şifrəni silmək üçün hazırkı şifrəni yaz:');
+if(p===null) return;
+if(p!==personalPass) return alert('Şifrə səhvdir!');
+if(!confirm('Şifrə silinsin? Bundan sonra Şəxsi Qeydlər şifrəsiz açılacaq.')) return;
+personalPass=''; localStorage.removeItem('personal_pass'); personalUnlocked=false;
+alert('Şifrə silindi. İndi yenidən şifrə qoya bilərsən.');
+updatePersonalView();
+}
+function forgotPass(){
+alert('Şifrəni unutmusansa:\n\n1. Şifrəni heç kim bərpa edə bilməz, çünki yalnız sənin telefonundadır.\n2. Şifrəni silmək üçün qeydləri də silmək lazım olacaq.\n\nƏgər tamamilə unutmusansa mənə de, şifrəni sıfırlamaq üçün yol göstərim.');
 }
 function openMenu(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show')}
 function closeMenu(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
@@ -416,6 +507,7 @@ render();
 alert('Düzəliş yadda saxlanıldı ✅'+(remindVal?'\n🔔 Yeni xatırlatma: '+notes[editIdx].remindStr:''));
 }
 function addPersonal(){
+if(!personalUnlocked && personalPass) return alert('Əvvəlcə şifrəni yazıb aç!');
 let t=document.getElementById('personalTitle').value.trim();
 let x=document.getElementById('personalText').value.trim();
 if(!t && !x) return alert('Bir şey yaz!');
@@ -553,6 +645,18 @@ document.getElementById('list').innerHTML=!filtered.length?'<div class="empty">H
 let totalUnpaid=salaries.filter(s=>!s.paid).reduce((a,s)=>a+s.total,0);
 document.getElementById('salaryList').innerHTML='<div style="margin-top:12px;font-weight:700">Bütün maaşlar • Ödənilməmiş cəmi: '+totalUnpaid.toFixed(2)+' ₼</div>'+(salaries.length?salaries.map((s,i)=>`<div class="salaryCard"><b>${s.paid?'✅ ':''}${s.name} - ${s.month}</b><div class="formula">${s.formula}</div><small>${s.date} • Veriləcək: ${s.total.toFixed(2)} ₼</small><div style="display:flex;gap:8px;margin-top:8px"><button class="paid" style="background:${s.paid?'#f59e0b':'#22c55e'}" onclick="togglePaid(${i})">${s.paid?'↩ Ödənilmədi':'✅ Maaş Verildi'}</button><button class="delBtn" onclick="delSalary(${i})">Sil</button></div></div>`).join(''):'<div class="empty">Hələ maaş hesablanmayıb</div>');
 }
+function renderPersonal(){
+if(!personalPass || !personalUnlocked){
+document.getElementById('personalList').innerHTML='';
+document.getElementById('cPersonal').innerText='(🔒)';
+return;
+}
+let q=(document.getElementById('searchPersonal').value||'').toLowerCase();
+let filtered=personalNotes.filter(n=>(n.title+n.text).toLowerCase().includes(q));
+document.getElementById('cPersonal').innerText='('+personalNotes.length+')';
+document.getElementById('personalList').innerHTML=!filtered.length?'<div class="empty">Hələ şəxsi qeyd yoxdur</div>':filtered.map(n=>{let idx=personalNotes.indexOf(n);return `<div class="note personal ${n.done?'done':''}"><h3>💜 ${n.title} ${n.done?'✅':''}</h3><p>${n.text}</p><small>${n.date}</small><div class="btns">${n.done?`<button class="backBtn" onclick="togglePersonal(${idx})">↩ Geri Qaytar</button>`:`<button class="okBtn" onclick="togglePersonal(${idx})">✅ Tamamlandı</button>`}<button class="editBtn" onclick="openPersonalEdit(${idx})">✏️ Düzəliş</button><button class="delBtn" onclick="delPersonal(${idx})">Sil</button></div></div>`}).join('');
+}
+document.getElementById('unlockPass').addEventListener('keydown', function(e){ if(e.key==='Enter') unlockPersonal(); });
 loadAutoInputs();calcPreview();render();renderExp();renderPersonal();
 setTimeout(()=>{checkRemind();checkCustomerRemind(false);}, 800);
 setInterval(()=>{ checkCustomerRemind(false); if(checkAutoDelete()){} else { let autoMs=getAutoMs(); if(autoMs>0 && notes.some(n=>n.done)) render(); } }, 10000);

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dükkan Proqramı</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f2f2f2}
+.topbar{background:#fff;display:flex;align-items:center;gap:8px;padding:12px 14px;box-shadow:0 1px 5px rgba(0,0,0,.1);position:sticky;top:0;z-index:10;overflow-x:auto;white-space:nowrap}
+.menuBtn{font-size:24px;background:none;border:none;cursor:pointer}
+.topbar h1{font-size:18px;margin:0}
+.tabBtn{padding:8px 12px;border-radius:20px;border:1px solid #ddd;background:#f5f5f5;cursor:pointer;font-size:13px}
+.tabBtn.active{background:#000;color:#fff}
+.box{max-width:620px;margin:auto;background:#fff;border-radius:15px;padding:18px;margin-top:15px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+input,textarea,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin-bottom:10px;font-size:15px;outline:none}
+textarea{height:80px;resize:none}
+.addBtn{width:100%;padding:13px;background:#000;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer}
+.note{background:#fafafa;border:1px solid #eee;border-radius:12px;padding:13px;margin-top:12px}
+.note.done{background:#e9f9ee}
+.note.done h3,.note.done p{text-decoration:line-through;opacity:.6}
+.note h3{margin:0 0 5px;font-size:16px}
+.note p{margin:0;color:#555;white-space:pre-wrap;font-size:14px}
+.note small{color:#999;font-size:12px}
+.note.highlight{border:3px solid #facc15;background:#fefce8;box-shadow:0 0 15px rgba(250,204,21,.5)}
+.btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.okBtn{flex:1;background:#22c55e;color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;cursor:pointer}
+.backBtn{flex:1;background:#f59e0b;color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;cursor:pointer}
+.delBtn{background:#ef4444;color:#fff;border:none;padding:10px 14px;border-radius:9px;cursor:pointer}
+.editBtn{background:#2563eb;color:#fff;border:none;padding:10px 14px;border-radius:9px;font-weight:700;cursor:pointer}
+.empty{text-align:center;color:#999;margin-top:20px}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20}
+.overlay.show{display:block}
+.sidebar{position:fixed;top:0;left:-300px;width:280px;height:100%;background:#fff;z-index:30;transition:.3s;padding:16px;overflow:auto}
+.sidebar.open{left:0}
+.sidebar .close{float:right;background:none;border:none;font-size:20px;cursor:pointer}
+.oneBox{border:1px solid #eee;border-radius:12px;overflow:hidden;margin-bottom:10px}
+.oneBoxHead{background:#f8f8f8;padding:13px;cursor:pointer;display:flex;justify-content:space-between;font-weight:700;font-size:14px}
+.oneBoxBody{display:none;padding:10px}
+.oneBoxBody.open{display:block}
+.subBtn{width:100%;padding:11px;border-radius:10px;border:1px solid #eee;background:#fff;margin-bottom:8px;text-align:left;cursor:pointer;font-size:14px;display:flex;justify-content:space-between}
+.subBtn.active{background:#000;color:#fff}
+.row{display:flex;gap:10px}.row>div{flex:1}
+.row label{font-size:12px;color:#777;display:block;margin-bottom:4px}
+.calcBox{background:#f8f9ff;border:1px solid #dbeafe;border-radius:12px;padding:13px;margin-top:5px}
+.calcBox div{display:flex;justify-content:space-between;padding:5px 0;font-size:14px}
+.calcBox .total{border-top:1px dashed #ccc;font-weight:900;font-size:18px}
+.salaryCard{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:13px;margin-top:12px}
+.salaryCard .formula{font-size:13px;color:#555;background:#f8f8f8;padding:8px;border-radius:8px;margin:8px 0;white-space:pre-wrap}
+.paid{background:#22c55e;color:#fff;border:none;padding:9px 12px;border-radius:9px;font-weight:700;cursor:pointer}
+.statRow{display:flex;gap:10px;margin-bottom:10px}
+.stat{flex:1;border-radius:12px;padding:12px;text-align:center}
+.stat b{display:block;font-size:17px}
+.stat span{font-size:12px;color:#666}
+.statInc{background:#dcfce7;border:1px solid #bbf7d0}
+.statExp{background:#fee2e2;border:1px solid #fecaca}
+.statBal{background:#dbeafe;border:1px solid #bfdbfe}
+.templateRow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.tplBtn{background:#fff;border:1px solid #ddd;padding:9px 12px;border-radius:20px;cursor:pointer;font-size:13px}
+.expCard{display:flex;justify-content:space-between;align-items:center;background:#fafafa;border:1px solid #eee;border-radius:12px;padding:12px;margin-top:10px}
+.expCard b{font-size:15px}
+.expCard small{color:#888;font-size:12px;display:block}
+.expAmt{font-weight:900;font-size:16px;white-space:nowrap}
+.filterRow{display:flex;gap:8px}
+.filterRow select{flex:1}
+.rangeBox{background:#f8f9ff;border:1px solid #dbeafe;border-radius:12px;padding:12px;margin-top:10px}
+.rangeBox h4{margin:0 0 8px;font-size:14px}
+.rangeBtn{flex:1;padding:11px;border:none;border-radius:10px;font-weight:700;cursor:pointer}
+.typeRow{display:flex;gap:8px;margin-bottom:10px}
+.typeBtn{flex:1;padding:12px;border-radius:10px;border:2px solid #ddd;background:#fff;font-weight:700;cursor:pointer;font-size:15px}
+.typeBtn.activeInc{background:#22c55e;color:#fff;border-color:#22c55e}
+.typeBtn.activeExp{background:#dc2626;color:#fff;border-color:#dc2626}
+.autoBox{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px;margin:12px 0}
+.autoBox h4{margin:0 0 8px;font-size:14px}
+.countdown{font-size:12px;color:#ea580c;font-weight:700}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+.modal.show{display:flex}
+.modalCard{background:#fff;border-radius:16px;padding:20px;width:100%;max-width:420px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.3);max-height:90vh;overflow:auto}
+.modalCard h3{margin:0 0 8px;font-size:18px}
+.modalCard p{color:#555;font-size:14px;margin:0 0 12px}
+.remList{text-align:left;background:#f8f8f8;border-radius:10px;padding:10px;margin-bottom:14px;max-height:160px;overflow:auto}
+.remList div{padding:6px 0;border-bottom:1px solid #eee;font-size:14px}
+.remindBox{background:#fef9c3;border:1px solid #fde047;border-radius:10px;padding:10px;margin-top:8px;font-size:13px}
+.snoozeBox{background:#f8f9ff;border:1px solid #dbeafe;border-radius:12px;padding:12px;margin:12px 0;text-align:left}
+.snoozeBox label{font-size:13px;font-weight:700}
+.snoozeBox input{margin-top:8px;margin-bottom:4px}
+.editField{text-align:left}
+.editField label{font-size:13px;font-weight:700}
+.editField input,.editField textarea{margin-top:6px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+<button class="menuBtn" onclick="openMenu()">☰</button>
+<h1>📝 Dükkan</h1>
+<button class="tabBtn active" id="tabNotes" onclick="showTab('notes')">Qeydlər</button>
+<button class="tabBtn" id="tabSalary" onclick="showTab('salary')">💰 Maaş Hesablanması</button>
+<button class="tabBtn" id="tabExp" onclick="showTab('exp')">💰 Gəlir / Xərc</button>
+</div>
+
+<!-- QEYDLƏR -->
+<div id="pageNotes"><div class="box">
+<input id="title" placeholder="Nə qeyd edirsən? Məs: Müştəriyə süd...">
+<textarea id="text" placeholder="Ətraflı yaz..."></textarea>
+<div style="background:#fef9c3;border:1px solid #fde047;border-radius:12px;padding:12px;margin-bottom:10px">
+<label style="font-size:13px;font-weight:700">🔔 Qeydi nə vaxt xatırladım?</label>
+<input id="remindAt" type="datetime-local" style="margin-top:8px;margin-bottom:6px">
+<div style="display:flex;gap:8px">
+<button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="setRemindQuick(60)">1 saat sonra</button>
+<button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="setRemindQuick(24*60)">Sabah eyni vaxt</button>
+<button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="clearRemind()">Xatırlatma yox</button>
+</div>
+<div style="font-size:12px;color:#666;margin-top:6px">Boş qoysan xatırlatma gəlməyəcək. Doldursan həmin tarixdə bildiriş çıxacaq.</div>
+</div>
+<button class="addBtn" onclick="addNote()">+ Qeyd Et</button>
+<div class="autoBox">
+<h4>⏰ Tamamlanmışlar nə vaxt silinsin?</h4>
+<div class="row">
+<div><label>Dəqiqə</label><input id="autoMin" type="number" min="0" max="59" value="0" oninput="setAuto()"></div>
+<div><label>Saat</label><input id="autoHour" type="number" min="0" max="23" value="0" oninput="setAuto()"></div>
+<div><label>Gün</label><input id="autoDay" type="number" min="0" max="30" value="0" oninput="setAuto()"></div>
+<div><label>Ay</label><input id="autoMonth" type="number" min="0" max="12" value="0" oninput="setAuto()"></div>
+</div>
+<div style="display:flex;gap:8px">
+<button class="rangeBtn" style="background:#f97316;color:#fff" onclick="setQuickAuto(0,1,0,0)">1 saat</button>
+<button class="rangeBtn" style="background:#000;color:#fff" onclick="setQuickAuto(0,0,1,0)">1 gün</button>
+<button class="rangeBtn" style="background:#2563eb;color:#fff" onclick="setQuickAuto(0,0,7,0)">1 həftə</button>
+<button class="rangeBtn" style="background:#eee" onclick="setQuickAuto(0,0,0,0)">Silinməsin</button>
+</div>
+<div id="autoInfo" style="font-size:12px;color:#666;margin-top:8px"></div>
+</div>
+<div id="list"></div></div></div>
+
+<!-- MAAŞ HESABLANMASI -->
+<div id="pageSalary" style="display:none"><div class="box">
+<h2 style="margin:0 0 12px;font-size:18px">💰 Maaş Hesablanması</h2>
+<input id="empName" placeholder="İşçinin adı: Məs: Cabrayil">
+<div class="row"><div><label>Günlük maaş (₼)</label><input id="daily" type="number" inputmode="numeric" value="30" oninput="calcPreview()"></div><div><label>İşlədiyi gün</label><input id="days" type="number" inputmode="numeric" value="20" oninput="calcPreview()"></div></div>
+<div class="row"><div><label>Avans (₼)</label><input id="advance" type="number" inputmode="numeric" value="0" oninput="calcPreview()"></div><div><label>Bonus (₼)</label><input id="bonus" type="number" inputmode="numeric" value="0" oninput="calcPreview()"></div></div>
+<div class="row"><div><label>Cərimə (₼)</label><input id="fine" type="number" inputmode="numeric" value="0" oninput="calcPreview()"></div><div><label>Ay</label><select id="month"><option>Yanvar</option><option>Fevral</option><option>Mart</option><option>Aprel</option><option>May</option><option>İyun</option><option>İyul</option><option>Avqust</option><option>Sentyabr</option><option>Oktyabr</option><option selected>Noyabr</option><option>Dekabr</option></select></div></div>
+<button class="addBtn" style="background:#2563eb;margin-bottom:10px" onclick="calcPreview()">🔄 Hesabla</button>
+<div class="calcBox"><div><span>İş haqqı:</span><b id="pGross">0 ₼</b></div><div><span>Avans:</span><span id="pAdv">- 0 ₼</span></div><div><span>Bonus:</span><span id="pBonus">+ 0 ₼</span></div><div><span>Cərimə:</span><span id="pFine">- 0 ₼</span></div><div class="total"><span>VERİLƏCƏK:</span><span id="pTotal">0 ₼</span></div><div style="font-size:12px;color:#666" id="pFormula"></div></div>
+<button class="addBtn" style="background:#22c55e;margin-top:12px" onclick="saveSalary()">✓ Maaşı Yadda Saxla</button>
+<div id="salaryList"></div></div></div>
+
+<!-- GƏLİR / XƏRC -->
+<div id="pageExp" style="display:none"><div class="box">
+<h2 style="margin:0 0 6px;font-size:18px">💰 Gəlir / Xərc</h2>
+<p style="font-size:12px;color:#888;margin:0 0 12px" id="todayLabel"></p>
+<div style="font-size:13px;font-weight:700;margin-bottom:6px">📅 Bu gün</div>
+<div class="statRow">
+<div class="stat statInc"><b id="todayInc">+0 ₼</b><span>Gəlir cəmi</span></div>
+<div class="stat statExp"><b id="todayExp">-0 ₼</b><span>Xərc cəmi</span></div>
+<div class="stat statBal"><b id="todayBal">0 ₼</b><span>Qalıq</span></div>
+</div>
+<div style="font-size:13px;font-weight:700;margin-bottom:6px">📅 Bu ay</div>
+<div class="statRow">
+<div class="stat statInc"><b id="monthInc">+0 ₼</b><span>Gəlir cəmi</span></div>
+<div class="stat statExp"><b id="monthExp">-0 ₼</b><span>Xərc cəmi</span></div>
+<div class="stat statBal"><b id="monthBal">0 ₼</b><span>Qalıq</span></div>
+</div>
+<div style="font-size:13px;font-weight:700;margin-bottom:6px">📊 Cəmi - Həmişə</div>
+<div class="statRow">
+<div class="stat statInc"><b id="allInc">+0 ₼</b><span>Gəlir cəmi</span></div>
+<div class="stat statExp"><b id="allExp">-0 ₼</b><span>Xərc cəmi</span></div>
+<div class="stat statBal"><b id="allBal">0 ₼</b><span>Qalıq</span></div>
+</div>
+<label style="font-size:13px;font-weight:700">Nə əlavə edirsən?</label>
+<div class="typeRow">
+<button class="typeBtn" id="btnInc" onclick="setType('income')">🟢 + Gəlir</button>
+<button class="typeBtn activeExp" id="btnExp" onclick="setType('expense')">🔴 - Xərc</button>
+</div>
+<label style="font-size:13px;font-weight:700">⚡ Şablon:</label>
+<div class="templateRow" id="tplIncome" style="display:none">
+<button class="tplBtn" onclick="quickExp('Günlük satış','Satış')">🛒 Satış</button>
+<button class="tplBtn" onclick="quickExp('Mal satışı','Satış')">📦 Mal satışı</button>
+<button class="tplBtn" onclick="quickExp('Borc qaytarıldı','Borc')">💸 Borc qaytarıldı</button>
+<button class="tplBtn" onclick="quickExp('Digər gəlir','Digər gəlir')">➕ Digər gəlir</button>
+</div>
+<div class="templateRow" id="tplExpense">
+<button class="tplBtn" onclick="quickExp('Çörək / Ərzaq','Ərzaq')">🍞 Ərzaq</button>
+<button class="tplBtn" onclick="quickExp('Yanacaq','Nəqliyyat')">⛽ Yanacaq</button>
+<button class="tplBtn" onclick="quickExp('İşıq pulu','Kommunal')">💡 İşıq</button>
+<button class="tplBtn" onclick="quickExp('Su pulu','Kommunal')">💧 Su</button>
+<button class="tplBtn" onclick="quickExp('İnternet','Kommunal')">🌐 İnternet</button>
+<button class="tplBtn" onclick="quickExp('Dükkan kirayəsi','Kirayə')">🏪 Kirayə</button>
+<button class="tplBtn" onclick="quickExp('Təmizlik','Digər')">🧹 Təmizlik</button>
+</div>
+<input id="expTitle" placeholder="Nədir? Məs: 10 kq un aldım / Günlük satış">
+<div class="row">
+<div><label>Məbləğ (₼)</label><input id="expAmount" type="number" inputmode="decimal" placeholder="0"></div>
+<div><label>Kateqoriya</label><select id="expCat"><option>Ərzaq</option><option>Nəqliyyat</option><option>Kommunal</option><option>Kirayə</option><option>Mal alışı</option><option>Təmir</option><option>Satış</option><option>Borc</option><option>Digər</option></select></div>
+</div>
+<input id="expNote" placeholder="Qeyd (istəyə bağlı)">
+<button class="addBtn" id="addExpBtn" style="background:#dc2626" onclick="addExpense()">- Xərci Əlavə Et</button>
+<h3 style="font-size:15px;margin:18px 0 8px">🔍 Filter</h3>
+<div class="filterRow">
+<select id="filterMonth" onchange="renderExp()"><option value="all">Bütün aylar</option><option value="today">Yalnız bu gün</option><option value="2026-11">2026 - Noyabr</option><option value="2026-10">2026 - Oktyabr</option><option value="2026-09">2026 - Sentyabr</option><option value="2026-08">2026 - Avqust</option><option value="2026-12">2026 - Dekabr</option></select>
+<select id="filterCat" onchange="renderExp()"><option value="all">Bütün kateqoriyalar</option><option>Ərzaq</option><option>Nəqliyyat</option><option>Kommunal</option><option>Kirayə</option><option>Mal alışı</option><option>Təmir</option><option>Satış</option><option>Borc</option><option>Digər</option></select>
+</div>
+<div class="filterRow" style="margin-top:8px">
+<select id="filterType" onchange="renderExp()"><option value="all">Gəlir + Xərc hamısı</option><option value="income">Yalnız Gəlir 🟢</option><option value="expense">Yalnız Xərc 🔴</option></select>
+</div>
+<div class="rangeBox">
+<h4>📅 Tarix Aralığı ilə Bax</h4>
+<div class="row">
+<div><label>Başlanğıc</label><input id="dateFrom" type="date" value="2026-11-01"></div>
+<div><label>Son</label><input id="dateTo" type="date" value="2026-11-15"></div>
+</div>
+<div style="display:flex;gap:8px">
+<button class="rangeBtn" style="background:#000;color:#fff" onclick="applyRange()">🔍 Aralığa Bax</button>
+<button class="rangeBtn" style="background:#eee" onclick="clearRange()">✕ Təmizlə</button>
+</div>
+<div id="rangeResult" style="font-size:13px;margin-top:8px;color:#333"></div>
+</div>
+<input id="searchExp" placeholder="🔍 Axtar..." oninput="renderExp()" style="margin-top:10px">
+<div id="expList"></div>
+</div></div>
+
+<!-- 24 SAAT XƏBƏRDARLIQ -->
+<div class="modal" id="remindModal">
+<div class="modalCard">
+<div style="font-size:40px">🔔</div>
+<h3>Tamamlanmış tapşırığınız var!</h3>
+<p id="remindText"></p>
+<div class="remList" id="remindList"></div>
+<div style="display:flex;gap:10px">
+<button onclick="remindDeleteAll()" style="flex:1;padding:13px;background:#dc2626;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">Bəli, Sil ✅</button>
+<button onclick="remindKeep()" style="flex:1;padding:13px;background:#eee;border:none;border-radius:10px;font-weight:700;cursor:pointer">Xeyr, Saxla ❌</button>
+</div>
+<p style="font-size:11px;color:#999;margin-top:10px">Xeyr bassan, 24 saatdan sonra yenidən soruşacam.</p>
+</div>
+</div>
+
+<!-- MÜŞTƏRİ XATIRLATMA -->
+<div class="modal" id="customerModal">
+<div class="modalCard" style="border:3px solid #facc15">
+<div style="font-size:42px">🔔</div>
+<h3 id="custTitle">Xatırlatma!</h3>
+<p id="custText"></p>
+<div class="remList" id="custList"></div>
+<div class="snoozeBox">
+<label>⏰ Sonra xatırlat - istəyə bağlı tarix seç:</label>
+<input id="snoozeAt" type="datetime-local">
+<div style="display:flex;gap:8px;margin-top:6px">
+<button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="setSnoozeQuick(60)">1 saat sonra</button>
+<button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="setSnoozeQuick(24*60)">Sabah</button>
+<button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="document.getElementById('snoozeAt').value=''">Təmizlə</button>
+</div>
+<div style="font-size:12px;color:#666;margin-top:6px">Tarix seçməsən, avtomatik <b>1 saatdan sonra</b> yenidən xatırladacam.</div>
+</div>
+<div style="display:flex;gap:8px">
+<button onclick="goToNote()" style="flex:1;padding:13px;background:#000;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">📝 Qeydə Get</button>
+<button onclick="closeCustomerModal(true)" style="flex:1;padding:13px;background:#22c55e;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">✅ Tamamlandı</button>
+</div>
+<button onclick="closeCustomerModal(false)" style="width:100%;padding:13px;background:#f59e0b;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;margin-top:8px">⏰ Sonra Xatırlat - 2 rol</button>
+</div>
+</div>
+
+<!-- QEYD DÜZƏLİŞ MODAL - YENİ -->
+<div class="modal" id="editModal">
+<div class="modalCard" style="text-align:left">
+<h3 style="text-align:center">✏️ Qeydi Düzəlt</h3>
+<div class="editField"><label>Başlıq / Qeyd adı</label><input id="editTitle" placeholder="Başlıq"></div>
+<div class="editField"><label>İçərisi - Ətraflı yazı</label><textarea id="editText" placeholder="Ətraflı yaz..." style="height:90px"></textarea></div>
+<div class="editField"><label>🔔 Xatırlatma tarixi - Gün / Ay / İl / Saat / Dəqiqə</label><input id="editRemind" type="datetime-local"></div>
+<div style="display:flex;gap:8px">
+<button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="setEditRemindQuick(60)">1 saat sonra</button>
+<button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="setEditRemindQuick(24*60)">Sabah</button>
+<button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="document.getElementById('editRemind').value=''">Xatırlatma yox</button>
+</div>
+<div style="font-size:12px;color:#888;margin:8px 0">Xatırlatmanı silsən, bildiriş gəlməyəcək. Tarixi dəyişsən, yeni tarixdə xatırladacam.</div>
+<div style="display:flex;gap:8px">
+<button onclick="saveEdit()" style="flex:1;padding:13px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">💾 Yadda Saxla</button>
+<button onclick="closeEdit()" style="flex:1;padding:13px;background:#eee;border:none;border-radius:10px;font-weight:700;cursor:pointer">Ləğv et</button>
+</div>
+</div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeMenu()"></div>
+<div class="sidebar" id="sidebar">
+<button class="close" onclick="closeMenu()">✕</button>
+<h2 style="margin:0 0 12px">☰ Menyu</h2>
+<div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box1','arrow1')"><span>📝 Qeydlərim</span><span id="arrow1">▼</span></div><div class="oneBoxBody" id="box1">
+<button class="subBtn active" id="btnAll" onclick="setFilter('all')">📋 Hamısı <span id="cAll"></span></button>
+<button class="subBtn" id="btnActive" onclick="setFilter('active')">⏳ Bitməmişlər <span id="cActive"></span></button>
+<button class="subBtn" id="btnDone" onclick="setFilter('done')">✅ Bitmişlər <span id="cDone"></span></button>
+<button class="subBtn" onclick="showTab('notes');closeMenu();checkCustomerRemind(true)">🔔 Xatırlatmalar <span id="cRemind"></span></button></div></div>
+<div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box2','arrow2')"><span>💰 Maaş Hesablanması</span><span id="arrow2">▼</span></div><div class="oneBoxBody" id="box2"><button class="subBtn" onclick="showTab('salary');closeMenu()">💰 Maaş Hesablanması</button></div></div>
+<div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box3','arrow3')"><span>💰 Gəlir / Xərc</span><span id="arrow3">▼</span></div><div class="oneBoxBody" id="box3"><button class="subBtn" onclick="showTab('exp');closeMenu()">💰 Gəlir / Xərc Yaz</button><button class="subBtn" onclick="showTab('exp');closeMenu()">📅 Bu ay <span id="cExpMonth"></span></button><button class="subBtn" onclick="showTab('exp');closeMenu()">📊 Bu gün <span id="cExpToday"></span></button></div></div>
+<input id="search" placeholder="🔍 Qeydlərdə axtar..." oninput="render()" style="padding:10px;border:1px solid #ddd;border-radius:10px;width:100%">
+</div>
+
+<script>
+let notes = JSON.parse(localStorage.getItem('sade_notes')||'[]');
+let salaries = JSON.parse(localStorage.getItem('salaries_v1')||'[]');
+let expenses = JSON.parse(localStorage.getItem('expenses_v1')||'[]');
+expenses = expenses.map(e=>({...e, type:e.type||'expense'}));
+let filter='all';
+let rangeActive=false;
+let rangeFrom='', rangeTo='';
+let curType='expense';
+let autoCfg = JSON.parse(localStorage.getItem('autoDelCfg')||'{"min":0,"hour":0,"day":0,"month":0}');
+let currentCustIdx = -1;
+let highlightIdx = -1;
+let editIdx = -1;
+function todayKey(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function monthKey(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
+function showTab(t){['notes','salary','exp'].forEach(x=>document.getElementById('page'+(x==='notes'?'Notes':x==='salary'?'Salary':'Exp')).style.display=x===t?'block':'none');document.getElementById('tabNotes').classList.toggle('active',t==='notes');document.getElementById('tabSalary').classList.toggle('active',t==='salary');document.getElementById('tabExp').classList.toggle('active',t==='exp');render();renderExp();if(t==='notes'){checkRemind();checkCustomerRemind(false);}}
+function openMenu(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show')}
+function closeMenu(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
+function toggleBox(id,arrow){document.getElementById(id).classList.toggle('open');let el=document.getElementById(arrow);el.innerText=el.innerText==='▼'?'▲':'▼'}
+function setFilter(f){filter=f;highlightIdx=-1;showTab('notes');render();}
+function setRemindQuick(mins){let d=new Date(Date.now()+mins*60*1000);let y=d.getFullYear();let m=String(d.getMonth()+1).padStart(2,'0');let dd=String(d.getDate()).padStart(2,'0');let hh=String(d.getHours()).padStart(2,'0');let mm=String(d.getMinutes()).padStart(2,'0');document.getElementById('remindAt').value=y+'-'+m+'-'+dd+'T'+hh+':'+mm;}
+function clearRemind(){document.getElementById('remindAt').value='';}
+function setSnoozeQuick(mins){let d=new Date(Date.now()+mins*60*1000);let y=d.getFullYear();let m=String(d.getMonth()+1).padStart(2,'0');let dd=String(d.getDate()).padStart(2,'0');let hh=String(d.getHours()).padStart(2,'0');let mm=String(d.getMinutes()).padStart(2,'0');document.getElementById('snoozeAt').value=y+'-'+m+'-'+dd+'T'+hh+':'+mm;}
+function setEditRemindQuick(mins){let d=new Date(Date.now()+mins*60*1000);let y=d.getFullYear();let m=String(d.getMonth()+1).padStart(2,'0');let dd=String(d.getDate()).padStart(2,'0');let hh=String(d.getHours()).padStart(2,'0');let mm=String(d.getMinutes()).padStart(2,'0');document.getElementById('editRemind').value=y+'-'+m+'-'+dd+'T'+hh+':'+mm;}
+function addNote(){
+let t=document.getElementById('title').value.trim();
+let x=document.getElementById('text').value.trim();
+if(!t&&!x)return alert('Bir şey yaz!');
+let remindVal=document.getElementById('remindAt').value;
+let remindAt=remindVal? new Date(remindVal).getTime() : null;
+let remindStr=remindVal? new Date(remindVal).toLocaleString('az-AZ') : '';
+if(remindAt && remindAt < Date.now()){ if(!confirm('Seçdiyin tarix keçib! Yenə də yadda saxlayım?')) return; }
+notes.unshift({title:t||'Qeyd',text:x,date:new Date().toLocaleString('az-AZ'),done:false,doneAt:null,remindAt,remindStr,remindShown:false});
+localStorage.setItem('sade_notes',JSON.stringify(notes));
+document.getElementById('title').value='';document.getElementById('text').value='';document.getElementById('remindAt').value='';
+render();
+if(remindAt) alert('Qeyd yadda saxlanıldı ✅\n🔔 '+remindStr+' - də xatırladacam');
+}
+function toggle(i){notes[i].done=!notes[i].done;if(notes[i].done){notes[i].doneAt=Date.now();}else{notes[i].doneAt=null;}localStorage.setItem('sade_notes',JSON.stringify(notes));render()}
+function del(i){if(confirm('Silinsin?')){notes.splice(i,1);localStorage.setItem('sade_notes',JSON.stringify(notes));render()}}
+// DÜZƏLİŞ - YENİ
+function openEdit(i){
+editIdx=i;
+let n=notes[i];
+document.getElementById('editTitle').value=n.title||'';
+document.getElementById('editText').value=n.text||'';
+if(n.remindAt){
+let d=new Date(n.remindAt);
+let y=d.getFullYear();let m=String(d.getMonth()+1).padStart(2,'0');let dd=String(d.getDate()).padStart(2,'0');let hh=String(d.getHours()).padStart(2,'0');let mm=String(d.getMinutes()).padStart(2,'0');
+document.getElementById('editRemind').value=y+'-'+m+'-'+dd+'T'+hh+':'+mm;
+} else {
+document.getElementById('editRemind').value='';
+}
+document.getElementById('editModal').classList.add('show');
+}
+function closeEdit(){editIdx=-1;document.getElementById('editModal').classList.remove('show');}
+function saveEdit(){
+if(editIdx<0) return;
+let t=document.getElementById('editTitle').value.trim();
+let x=document.getElementById('editText').value.trim();
+let remindVal=document.getElementById('editRemind').value;
+if(!t && !x) return alert('Başlıq və ya yazı boş ola bilməz!');
+notes[editIdx].title=t||'Qeyd';
+notes[editIdx].text=x;
+if(remindVal){
+notes[editIdx].remindAt=new Date(remindVal).getTime();
+notes[editIdx].remindStr=new Date(remindVal).toLocaleString('az-AZ');
+notes[editIdx].remindShown=false;
+} else {
+notes[editIdx].remindAt=null;
+notes[editIdx].remindStr='';
+notes[editIdx].remindShown=false;
+}
+localStorage.setItem('sade_notes',JSON.stringify(notes));
+closeEdit();
+render();
+alert('Düzəliş yadda saxlanıldı ✅'+(remindVal?'\n🔔 Yeni xatırlatma: '+notes[editIdx].remindStr:''));
+}
+function getAutoMs(){return ((autoCfg.month||0)*30 + (autoCfg.day||0))*24*60*60*1000 + (autoCfg.hour||0)*60*60*1000 + (autoCfg.min||0)*60*1000}
+function setAuto(){autoCfg={min:parseInt(document.getElementById('autoMin').value)||0,hour:parseInt(document.getElementById('autoHour').value)||0,day:parseInt(document.getElementById('autoDay').value)||0,month:parseInt(document.getElementById('autoMonth').value)||0};localStorage.setItem('autoDelCfg',JSON.stringify(autoCfg));updateAutoInfo();}
+function setQuickAuto(m,h,d,mo){document.getElementById('autoMin').value=m;document.getElementById('autoHour').value=h;document.getElementById('autoDay').value=d;document.getElementById('autoMonth').value=mo;setAuto();}
+function updateAutoInfo(){let ms=getAutoMs();if(ms===0){document.getElementById('autoInfo').innerHTML='🔒 Avto silmə bağlıdır - tamamlanmışlar qalır';}else{let parts=[];if(autoCfg.month)parts.push(autoCfg.month+' ay');if(autoCfg.day)parts.push(autoCfg.day+' gün');if(autoCfg.hour)parts.push(autoCfg.hour+' saat');if(autoCfg.min)parts.push(autoCfg.min+' dəqiqə');document.getElementById('autoInfo').innerHTML='⏰ Tamamlanmış qeyd <b>'+parts.join(' ')+'</b> sonra avtomatik silinəcək';}}
+function loadAutoInputs(){document.getElementById('autoMin').value=autoCfg.min||0;document.getElementById('autoHour').value=autoCfg.hour||0;document.getElementById('autoDay').value=autoCfg.day||0;document.getElementById('autoMonth').value=autoCfg.month||0;updateAutoInfo();}
+function checkAutoDelete(){let ms=getAutoMs();if(ms===0) return false;let now=Date.now();let changed=false;notes=notes.filter(n=>{if(n.done && n.doneAt && (now - n.doneAt >= ms)){changed=true;return false;}return true;});if(changed){localStorage.setItem('sade_notes',JSON.stringify(notes));render();}return changed;}
+function formatLeft(ms){if(ms<=0) return 'silinir...';let s=Math.floor(ms/1000);let d=Math.floor(s/86400);s%=86400;let h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60);let sec=s%60;if(d>0) return d+' gün '+h+' saat qaldı';if(h>0) return h+' saat '+m+' dəq qaldı';if(m>0) return m+' dəq '+sec+' san qaldı';return sec+' san qaldı';}
+function checkRemind(){
+let now=Date.now();
+let lastRemind=parseInt(localStorage.getItem('lastRemind24')||'0');
+if(now - lastRemind < 24*60*60*1000) return;
+let oldDone = notes.filter(n=> n.done && n.doneAt && (now - n.doneAt >= 24*60*60*1000));
+if(!oldDone.length) return;
+document.getElementById('remindText').innerHTML='Sizin <b>'+oldDone.length+' ədəd</b> tamamlanmış və silinməmiş tapşırığınız var. 24 saatdan çoxdur qalıb. Silim?';
+document.getElementById('remindList').innerHTML = oldDone.map(n=>'<div>✅ '+n.title+' <span style="color:#999;font-size:12px">- '+n.date+'</span></div>').join('');
+document.getElementById('remindModal').classList.add('show');
+}
+function remindDeleteAll(){let now=Date.now();notes = notes.filter(n=> !(n.done && n.doneAt && (now - n.doneAt >= 24*60*60*1000)));localStorage.setItem('sade_notes',JSON.stringify(notes));localStorage.setItem('lastRemind24', String(now));document.getElementById('remindModal').classList.remove('show');render(); alert('Silindi ✅');}
+function remindKeep(){localStorage.setItem('lastRemind24', String(Date.now()));document.getElementById('remindModal').classList.remove('show');}
+function checkCustomerRemind(force){
+let now=Date.now();
+let due = notes.findIndex(n=> !n.done && n.remindAt && !n.remindShown && n.remindAt <= now);
+if(due===-1){
+if(force){let upcoming=notes.filter(n=>!n.done && n.remindAt);if(!upcoming.length) alert('Hələ xatırlatma yoxdur'); else alert('Gələcək xatırlatmalar:\n'+upcoming.map(n=>n.title+' - '+n.remindStr).join('\n'));}
+return;
+}
+currentCustIdx=due;
+let n=notes[due];
+document.getElementById('custTitle').innerText='🔔 Xatırlatma!';
+document.getElementById('custText').innerHTML='Qeyd etdiyin vaxt çatdı:<br><b>'+n.title+'</b>';
+document.getElementById('custList').innerHTML='<div><b>'+n.title+'</b><br>'+(n.text||'')+'<br><span style="color:#999">Xatırlatma: '+n.remindStr+'</span></div>';
+document.getElementById('snoozeAt').value='';
+document.getElementById('customerModal').classList.add('show');
+}
+function goToNote(){
+if(currentCustIdx<0) return;
+highlightIdx = currentCustIdx;
+document.getElementById('customerModal').classList.remove('show');
+filter='all';
+showTab('notes');
+setTimeout(()=>{let el=document.getElementById('note-'+highlightIdx);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});}}, 300);
+}
+function closeCustomerModal(done){
+if(currentCustIdx<0){document.getElementById('customerModal').classList.remove('show');return;}
+if(done){notes[currentCustIdx].done=true;notes[currentCustIdx].doneAt=Date.now();notes[currentCustIdx].remindShown=true;localStorage.setItem('sade_notes',JSON.stringify(notes));document.getElementById('customerModal').classList.remove('show');render();alert('Tamamlandı ✅');}
+else{
+let snoozeVal=document.getElementById('snoozeAt').value;
+let nextTime, nextStr;
+if(snoozeVal){nextTime=new Date(snoozeVal).getTime();if(nextTime < Date.now()){ alert('Seçdiyin tarix keçib! 1 saat sonraya qoydum.'); nextTime=Date.now()+60*60*1000; }nextStr=new Date(nextTime).toLocaleString('az-AZ');}
+else{nextTime=Date.now()+60*60*1000;nextStr=new Date(nextTime).toLocaleString('az-AZ');}
+notes[currentCustIdx].remindAt=nextTime;notes[currentCustIdx].remindStr=nextStr;notes[currentCustIdx].remindShown=false;localStorage.setItem('sade_notes',JSON.stringify(notes));document.getElementById('customerModal').classList.remove('show');render();alert('⏰ Sonra xatırladacam:\n'+nextStr);
+}
+}
+function getNumbers(){return {daily:parseFloat(document.getElementById('daily').value)||0,days:parseFloat(document.getElementById('days').value)||0,adv:parseFloat(document.getElementById('advance').value)||0,bonus:parseFloat(document.getElementById('bonus').value)||0,fine:parseFloat(document.getElementById('fine').value)||0}}
+function calcPreview(){let n=getNumbers();let gross=n.daily*n.days;let total=gross-n.adv+n.bonus-n.fine;if(total<0)total=0;document.getElementById('pGross').innerText=gross.toFixed(2)+' ₼';document.getElementById('pAdv').innerText='- '+n.adv.toFixed(2)+' ₼';document.getElementById('pBonus').innerText='+ '+n.bonus.toFixed(2)+' ₼';document.getElementById('pFine').innerText='- '+n.fine.toFixed(2)+' ₼';document.getElementById('pTotal').innerText=total.toFixed(2)+' ₼';document.getElementById('pFormula').innerText='Formula: '+n.daily+' × '+n.days+' = '+gross.toFixed(2)+' | '+gross.toFixed(2)+' - '+n.adv+' + '+n.bonus+' - '+n.fine+' = '+total.toFixed(2)+' ₼';return {gross,total};}
+function saveSalary(){let name=document.getElementById('empName').value.trim();let n=getNumbers();if(!name)return alert('İşçinin adını yaz!');if(!n.daily||!n.days)return alert('Günlük maaş və günü yaz!');let c=calcPreview();let month=document.getElementById('month').value;let formula=n.daily+' × '+n.days+' = '+c.gross.toFixed(2)+' | '+c.gross.toFixed(2)+' - Avans '+n.adv+' + Bonus '+n.bonus+' - Cərimə '+n.fine+' = '+c.total.toFixed(2)+' ₼';if(!confirm(name+' - '+month+'\n'+formula+'\n\nBu düzgündür?'))return;salaries.unshift({name,month,daily:n.daily,days:n.days,adv:n.adv,bonus:n.bonus,fine:n.fine,gross:c.gross,total:c.total,formula,date:new Date().toLocaleString('az-AZ'),paid:false});localStorage.setItem('salaries_v1',JSON.stringify(salaries));document.getElementById('empName').value='';render();alert('Yadda saxlanıldı ✅');}
+function togglePaid(i){salaries[i].paid=!salaries[i].paid;localStorage.setItem('salaries_v1',JSON.stringify(salaries));render()}
+function delSalary(i){if(confirm('Bu maaş qeydi silinsin?')){salaries.splice(i,1);localStorage.setItem('salaries_v1',JSON.stringify(salaries));render()}}
+function setType(t){curType=t;document.getElementById('btnInc').className='typeBtn'+(t==='income'?' activeInc':'');document.getElementById('btnExp').className='typeBtn'+(t==='expense'?' activeExp':'');document.getElementById('tplIncome').style.display=t==='income'?'flex':'none';document.getElementById('tplExpense').style.display=t==='expense'?'flex':'none';let btn=document.getElementById('addExpBtn');btn.innerText=t==='income'?'+ Gəliri Əlavə Et':'- Xərci Əlavə Et';btn.style.background=t==='income'?'#22c55e':'#dc2626';}
+function quickExp(title,cat){document.getElementById('expTitle').value=title;document.getElementById('expCat').value=cat;document.getElementById('expAmount').focus();}
+function addExpense(){let title=document.getElementById('expTitle').value.trim();let amount=parseFloat(document.getElementById('expAmount').value);let cat=document.getElementById('expCat').value;let note=document.getElementById('expNote').value.trim();if(!title) return alert('Adını yaz!');if(!amount || amount<=0) return alert('Məbləği yaz!');let now=new Date();let item={title,amount,cat,note,type:curType,day:todayKey(),month:monthKey(),date:now.toLocaleString('az-AZ'),time:now.toLocaleTimeString('az-AZ',{hour:'2-digit',minute:'2-digit'})};expenses.unshift(item);localStorage.setItem('expenses_v1',JSON.stringify(expenses));document.getElementById('expTitle').value='';document.getElementById('expAmount').value='';document.getElementById('expNote').value='';renderExp();alert(curType==='income'?'Gəlir əlavə olundu ✅':'Xərc əlavə olundu ✅');}
+function delExp(i){if(confirm('Silinsin?')){expenses.splice(i,1);localStorage.setItem('expenses_v1',JSON.stringify(expenses));renderExp();}}
+function applyRange(){let f=document.getElementById('dateFrom').value;let t=document.getElementById('dateTo').value;if(!f||!t) return alert('Hər iki tarixi seç!');if(f>t) return alert('Başlanğıc tarix son tarixdən böyük ola bilməz!');rangeActive=true;rangeFrom=f;rangeTo=t;renderExp();}
+function clearRange(){rangeActive=false;rangeFrom='';rangeTo='';document.getElementById('rangeResult').innerHTML='';renderExp();}
+function calcSums(list){let inc=list.filter(e=>e.type==='income').reduce((a,e)=>a+e.amount,0);let exp=list.filter(e=>e.type!=='income').reduce((a,e)=>a+e.amount,0);return {inc,exp,bal:inc-exp};}
+function renderExp(){
+let tk=todayKey();let mk=monthKey();
+let t=calcSums(expenses.filter(e=>e.day===tk));
+let m=calcSums(expenses.filter(e=>e.month===mk));
+let a=calcSums(expenses);
+document.getElementById('todayInc').innerText='+'+t.inc.toFixed(2)+' ₼';
+document.getElementById('todayExp').innerText='-'+t.exp.toFixed(2)+' ₼';
+document.getElementById('todayBal').innerText=t.bal.toFixed(2)+' ₼';
+document.getElementById('monthInc').innerText='+'+m.inc.toFixed(2)+' ₼';
+document.getElementById('monthExp').innerText='-'+m.exp.toFixed(2)+' ₼';
+document.getElementById('monthBal').innerText=m.bal.toFixed(2)+' ₼';
+document.getElementById('allInc').innerText='+'+a.inc.toFixed(2)+' ₼';
+document.getElementById('allExp').innerText='-'+a.exp.toFixed(2)+' ₼';
+document.getElementById('allBal').innerText=a.bal.toFixed(2)+' ₼';
+document.getElementById('todayLabel').innerText='Bu gün: '+new Date().toLocaleDateString('az-AZ')+' • 00:00-dan sonra yeni gün 0 ilə başlayır';
+document.getElementById('cExpToday').innerText='(Qalıq '+t.bal.toFixed(0)+' ₼)';
+document.getElementById('cExpMonth').innerText='(Qalıq '+m.bal.toFixed(0)+' ₼)';
+let fM=document.getElementById('filterMonth').value;
+let fC=document.getElementById('filterCat').value;
+let fT=document.getElementById('filterType').value;
+let q=(document.getElementById('searchExp').value||'').toLowerCase();
+let list=expenses.filter(e=>{
+if(rangeActive){ if(e.day < rangeFrom || e.day > rangeTo) return false; }
+else { if(fM==='today' && e.day!==tk) return false; if(fM!=='all' && fM!=='today' && e.month!==fM) return false; }
+if(fC!=='all' && e.cat!==fC) return false;
+if(fT!=='all' && e.type!==fT) return false;
+return (e.title+e.note+e.cat).toLowerCase().includes(q);
+});
+let s=calcSums(list);
+if(rangeActive){document.getElementById('rangeResult').innerHTML='📅 <b>'+rangeFrom.split('-').reverse().join('.')+' - '+rangeTo.split('-').reverse().join('.')+'</b><br>🟢 Gəlir: <b style="color:#16a34a">+'+s.inc.toFixed(2)+' ₼</b> • 🔴 Xərc: <b style="color:#dc2626">-'+s.exp.toFixed(2)+' ₼</b> • 💰 Qalıq: <b>'+s.bal.toFixed(2)+' ₼</b> • '+list.length+' əməliyyat';} else { document.getElementById('rangeResult').innerHTML=''; }
+document.getElementById('expList').innerHTML = list.length? '<div style="margin-top:12px;font-size:13px;color:#666">Göstərilən: 🟢 Gəlir <b style="color:#16a34a">+'+s.inc.toFixed(2)+' ₼</b> • 🔴 Xərc <b style="color:#dc2626">-'+s.exp.toFixed(2)+' ₼</b> • 💰 Qalıq <b>'+s.bal.toFixed(2)+' ₼</b></div>' + list.map(e=>{let idx=expenses.indexOf(e);let isInc=e.type==='income';return `<div class="expCard" style="border-left:4px solid ${isInc?'#22c55e':'#dc2626'}"><div><b>${isInc?'🟢 ':'🔴 '}${e.title}</b><small>${e.cat} • ${e.date} • ${e.time} ${e.note? ' • '+e.note:''}</small></div><div style="text-align:right"><div class="expAmt" style="color:${isInc?'#16a34a':'#dc2626'}">${isInc?'+':'-'}${e.amount.toFixed(2)} ₼</div><button class="delBtn" style="padding:6px 10px;margin-top:4px" onclick="delExp(${idx})">Sil</button></div></div>`}).join('') : '<div class="empty">Bu filterdə heç nə yoxdur</div>';
+}
+function render(){
+checkAutoDelete();
+let q=(document.getElementById('search').value||'').toLowerCase();
+let filtered=notes.filter(n=>{if(filter==='done'&&!n.done)return false;if(filter==='active'&&n.done)return false;return (n.title+n.text).toLowerCase().includes(q)});
+document.getElementById('cAll').innerText='('+notes.length+')';document.getElementById('cActive').innerText='('+notes.filter(n=>!n.done).length+')';document.getElementById('cDone').innerText='('+notes.filter(n=>n.done).length+')';
+document.getElementById('cRemind').innerText='('+notes.filter(n=>!n.done && n.remindAt).length+')';
+let autoMs=getAutoMs();
+document.getElementById('list').innerHTML=!filtered.length?'<div class="empty">Hələ qeyd yoxdur</div>':filtered.map(n=>{let idx=notes.indexOf(n);let left='';if(n.done && n.doneAt && autoMs>0){let remain=(n.doneAt+autoMs)-Date.now();left='<div class="countdown">⏰ '+formatLeft(remain)+' sonra silinəcək</div>';}let rem='';if(n.remindAt && !n.done){rem='<div class="remindBox">🔔 Xatırlatma: <b>'+n.remindStr+'</b></div>';}let hl = (idx===highlightIdx)?' highlight':'';return `<div class="note ${n.done?'done':''}${hl}" id="note-${idx}"><h3>${n.title} ${n.done?'✅':''}</h3><p>${n.text}</p><small>${n.date}</small>${rem}${left}<div class="btns">${n.done?`<button class="backBtn" onclick="toggle(${idx})">↩ Geri Qaytar</button>`:`<button class="okBtn" onclick="toggle(${idx})">✅ Tamamlandı</button>`}<button class="editBtn" onclick="openEdit(${idx})">✏️ Düzəliş</button><button class="delBtn" onclick="del(${idx})">Sil</button></div></div>`}).join('');
+let totalUnpaid=salaries.filter(s=>!s.paid).reduce((a,s)=>a+s.total,0);
+document.getElementById('salaryList').innerHTML='<div style="margin-top:12px;font-weight:700">Bütün maaşlar • Ödənilməmiş cəmi: '+totalUnpaid.toFixed(2)+' ₼</div>'+(salaries.length?salaries.map((s,i)=>`<div class="salaryCard"><b>${s.paid?'✅ ':''}${s.name} - ${s.month}</b><div class="formula">${s.formula}</div><small>${s.date} • Veriləcək: ${s.total.toFixed(2)} ₼</small><div style="display:flex;gap:8px;margin-top:8px"><button class="paid" style="background:${s.paid?'#f59e0b':'#22c55e'}" onclick="togglePaid(${i})">${s.paid?'↩ Ödənilmədi':'✅ Maaş Verildi'}</button><button class="delBtn" onclick="delSalary(${i})">Sil</button></div></div>`).join(''):'<div class="empty">Hələ maaş hesablanmayıb</div>');
+}
+loadAutoInputs();calcPreview();render();renderExp();
+setTimeout(()=>{checkRemind();checkCustomerRemind(false);}, 800);
+setInterval(()=>{ checkCustomerRemind(false); if(checkAutoDelete()){} else { let autoMs=getAutoMs(); if(autoMs>0 && notes.some(n=>n.done)) render(); } }, 10000);
+</script>
+</body>
+</html>

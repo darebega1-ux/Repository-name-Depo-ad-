@@ -23,6 +23,7 @@ textarea{height:80px;resize:none}
 .note p{margin:0;color:#555;white-space:pre-wrap;font-size:14px}
 .note small{color:#999;font-size:12px}
 .note.highlight{border:3px solid #facc15;background:#fefce8;box-shadow:0 0 15px rgba(250,204,21,.5)}
+.note.personal{border-left:4px solid #a855f7;background:#faf5ff}
 .btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .okBtn{flex:1;background:#22c55e;color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;cursor:pointer}
 .backBtn{flex:1;background:#f59e0b;color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;cursor:pointer}
@@ -97,6 +98,7 @@ textarea{height:80px;resize:none}
 <button class="tabBtn active" id="tabNotes" onclick="showTab('notes')">Qeydlər</button>
 <button class="tabBtn" id="tabSalary" onclick="showTab('salary')">💰 Maaş Hesablanması</button>
 <button class="tabBtn" id="tabExp" onclick="showTab('exp')">💰 Gəlir / Xərc</button>
+<button class="tabBtn" id="tabPersonal" onclick="showTab('personal')">🔒 Şəxsi Qeydlərim</button>
 </div>
 
 <!-- QEYDLƏR -->
@@ -218,6 +220,18 @@ textarea{height:80px;resize:none}
 <div id="expList"></div>
 </div></div>
 
+<!-- ŞƏXSİ QEYDLƏRİM - YENİ BÖLMƏ -->
+<div id="pagePersonal" style="display:none"><div class="box">
+<h2 style="margin:0 0 6px;font-size:18px">🔒 Şəxsi Qeydlərim</h2>
+<p style="font-size:13px;color:#888;margin:0 0 12px">Bura yalnız sənin üçündür. Dükkan qeydlərindən ayrı saxlanılır.</p>
+<div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:12px;padding:12px;margin-bottom:10px;font-size:13px;color:#6b21a8">💜 Şəxsi işlərin, fikirlərin, parolların yox - sadəcə öz qeydlərin. Heç kim görmür, dükkan səhifəsində çıxmir.</div>
+<input id="personalTitle" placeholder="Başlıq: Məs: Sabah həkimə get...">
+<textarea id="personalText" placeholder="Ətraflı yaz..."></textarea>
+<button class="addBtn" style="background:#7c3aed" onclick="addPersonal()">+ Şəxsi Qeyd Əlavə Et</button>
+<input id="searchPersonal" placeholder="🔍 Şəxsi qeydlərdə axtar..." oninput="renderPersonal()" style="margin-top:14px">
+<div id="personalList"></div>
+</div></div>
+
 <!-- 24 SAAT XƏBƏRDARLIQ -->
 <div class="modal" id="remindModal">
 <div class="modalCard">
@@ -258,13 +272,13 @@ textarea{height:80px;resize:none}
 </div>
 </div>
 
-<!-- QEYD DÜZƏLİŞ MODAL - YENİ -->
+<!-- QEYD DÜZƏLİŞ MODAL -->
 <div class="modal" id="editModal">
 <div class="modalCard" style="text-align:left">
 <h3 style="text-align:center">✏️ Qeydi Düzəlt</h3>
 <div class="editField"><label>Başlıq / Qeyd adı</label><input id="editTitle" placeholder="Başlıq"></div>
 <div class="editField"><label>İçərisi - Ətraflı yazı</label><textarea id="editText" placeholder="Ətraflı yaz..." style="height:90px"></textarea></div>
-<div class="editField"><label>🔔 Xatırlatma tarixi - Gün / Ay / İl / Saat / Dəqiqə</label><input id="editRemind" type="datetime-local"></div>
+<div class="editField"><label>🔔 Xatırlatma tarixi</label><input id="editRemind" type="datetime-local"></div>
 <div style="display:flex;gap:8px">
 <button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="setEditRemindQuick(60)">1 saat sonra</button>
 <button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="setEditRemindQuick(24*60)">Sabah</button>
@@ -274,6 +288,19 @@ textarea{height:80px;resize:none}
 <div style="display:flex;gap:8px">
 <button onclick="saveEdit()" style="flex:1;padding:13px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">💾 Yadda Saxla</button>
 <button onclick="closeEdit()" style="flex:1;padding:13px;background:#eee;border:none;border-radius:10px;font-weight:700;cursor:pointer">Ləğv et</button>
+</div>
+</div>
+</div>
+
+<!-- ŞƏXSİ QEYD DÜZƏLİŞ MODAL -->
+<div class="modal" id="editPersonalModal">
+<div class="modalCard" style="text-align:left">
+<h3 style="text-align:center">✏️ Şəxsi Qeydi Düzəlt</h3>
+<div class="editField"><label>Başlıq</label><input id="editPersonalTitle" placeholder="Başlıq"></div>
+<div class="editField"><label>Yazı</label><textarea id="editPersonalText" placeholder="Ətraflı yaz..." style="height:90px"></textarea></div>
+<div style="display:flex;gap:8px">
+<button onclick="savePersonalEdit()" style="flex:1;padding:13px;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">💾 Yadda Saxla</button>
+<button onclick="closePersonalEdit()" style="flex:1;padding:13px;background:#eee;border:none;border-radius:10px;font-weight:700;cursor:pointer">Ləğv et</button>
 </div>
 </div>
 </div>
@@ -289,6 +316,7 @@ textarea{height:80px;resize:none}
 <button class="subBtn" onclick="showTab('notes');closeMenu();checkCustomerRemind(true)">🔔 Xatırlatmalar <span id="cRemind"></span></button></div></div>
 <div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box2','arrow2')"><span>💰 Maaş Hesablanması</span><span id="arrow2">▼</span></div><div class="oneBoxBody" id="box2"><button class="subBtn" onclick="showTab('salary');closeMenu()">💰 Maaş Hesablanması</button></div></div>
 <div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box3','arrow3')"><span>💰 Gəlir / Xərc</span><span id="arrow3">▼</span></div><div class="oneBoxBody" id="box3"><button class="subBtn" onclick="showTab('exp');closeMenu()">💰 Gəlir / Xərc Yaz</button><button class="subBtn" onclick="showTab('exp');closeMenu()">📅 Bu ay <span id="cExpMonth"></span></button><button class="subBtn" onclick="showTab('exp');closeMenu()">📊 Bu gün <span id="cExpToday"></span></button></div></div>
+<div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box4','arrow4')"><span>🔒 Şəxsi Qeydlərim</span><span id="arrow4">▼</span></div><div class="oneBoxBody" id="box4"><button class="subBtn" onclick="showTab('personal');closeMenu()">🔒 Şəxsi Qeydlərim <span id="cPersonal"></span></button></div></div>
 <input id="search" placeholder="🔍 Qeydlərdə axtar..." oninput="render()" style="padding:10px;border:1px solid #ddd;border-radius:10px;width:100%">
 </div>
 
@@ -296,6 +324,7 @@ textarea{height:80px;resize:none}
 let notes = JSON.parse(localStorage.getItem('sade_notes')||'[]');
 let salaries = JSON.parse(localStorage.getItem('salaries_v1')||'[]');
 let expenses = JSON.parse(localStorage.getItem('expenses_v1')||'[]');
+let personalNotes = JSON.parse(localStorage.getItem('personal_notes')||'[]');
 expenses = expenses.map(e=>({...e, type:e.type||'expense'}));
 let filter='all';
 let rangeActive=false;
@@ -305,9 +334,18 @@ let autoCfg = JSON.parse(localStorage.getItem('autoDelCfg')||'{"min":0,"hour":0,
 let currentCustIdx = -1;
 let highlightIdx = -1;
 let editIdx = -1;
+let editPersonalIdx = -1;
 function todayKey(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function monthKey(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
-function showTab(t){['notes','salary','exp'].forEach(x=>document.getElementById('page'+(x==='notes'?'Notes':x==='salary'?'Salary':'Exp')).style.display=x===t?'block':'none');document.getElementById('tabNotes').classList.toggle('active',t==='notes');document.getElementById('tabSalary').classList.toggle('active',t==='salary');document.getElementById('tabExp').classList.toggle('active',t==='exp');render();renderExp();if(t==='notes'){checkRemind();checkCustomerRemind(false);}}
+function showTab(t){
+let map={notes:'Notes',salary:'Salary',exp:'Exp',personal:'Personal'};
+['notes','salary','exp','personal'].forEach(x=>document.getElementById('page'+map[x]).style.display=x===t?'block':'none');
+document.getElementById('tabNotes').classList.toggle('active',t==='notes');
+document.getElementById('tabSalary').classList.toggle('active',t==='salary');
+document.getElementById('tabExp').classList.toggle('active',t==='exp');
+document.getElementById('tabPersonal').classList.toggle('active',t==='personal');
+render();renderExp();renderPersonal();if(t==='notes'){checkRemind();checkCustomerRemind(false);}
+}
 function openMenu(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show')}
 function closeMenu(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
 function toggleBox(id,arrow){document.getElementById(id).classList.toggle('open');let el=document.getElementById(arrow);el.innerText=el.innerText==='▼'?'▲':'▼'}
@@ -332,7 +370,6 @@ if(remindAt) alert('Qeyd yadda saxlanıldı ✅\n🔔 '+remindStr+' - də xatır
 }
 function toggle(i){notes[i].done=!notes[i].done;if(notes[i].done){notes[i].doneAt=Date.now();}else{notes[i].doneAt=null;}localStorage.setItem('sade_notes',JSON.stringify(notes));render()}
 function del(i){if(confirm('Silinsin?')){notes.splice(i,1);localStorage.setItem('sade_notes',JSON.stringify(notes));render()}}
-// DÜZƏLİŞ - YENİ
 function openEdit(i){
 editIdx=i;
 let n=notes[i];
@@ -369,6 +406,43 @@ localStorage.setItem('sade_notes',JSON.stringify(notes));
 closeEdit();
 render();
 alert('Düzəliş yadda saxlanıldı ✅'+(remindVal?'\n🔔 Yeni xatırlatma: '+notes[editIdx].remindStr:''));
+}
+// ŞƏXSİ QEYDLƏR - YENİ
+function addPersonal(){
+let t=document.getElementById('personalTitle').value.trim();
+let x=document.getElementById('personalText').value.trim();
+if(!t && !x) return alert('Bir şey yaz!');
+personalNotes.unshift({title:t||'Şəxsi Qeyd',text:x,date:new Date().toLocaleString('az-AZ'),done:false});
+localStorage.setItem('personal_notes',JSON.stringify(personalNotes));
+document.getElementById('personalTitle').value='';document.getElementById('personalText').value='';
+renderPersonal();
+alert('Şəxsi qeyd yadda saxlanıldı ✅');
+}
+function togglePersonal(i){personalNotes[i].done=!personalNotes[i].done;localStorage.setItem('personal_notes',JSON.stringify(personalNotes));renderPersonal();}
+function delPersonal(i){if(confirm('Şəxsi qeyd silinsin?')){personalNotes.splice(i,1);localStorage.setItem('personal_notes',JSON.stringify(personalNotes));renderPersonal();}}
+function openPersonalEdit(i){
+editPersonalIdx=i;
+let n=personalNotes[i];
+document.getElementById('editPersonalTitle').value=n.title||'';
+document.getElementById('editPersonalText').value=n.text||'';
+document.getElementById('editPersonalModal').classList.add('show');
+}
+function closePersonalEdit(){editPersonalIdx=-1;document.getElementById('editPersonalModal').classList.remove('show');}
+function savePersonalEdit(){
+if(editPersonalIdx<0) return;
+let t=document.getElementById('editPersonalTitle').value.trim();
+let x=document.getElementById('editPersonalText').value.trim();
+if(!t && !x) return alert('Boş ola bilməz!');
+personalNotes[editPersonalIdx].title=t||'Şəxsi Qeyd';
+personalNotes[editPersonalIdx].text=x;
+localStorage.setItem('personal_notes',JSON.stringify(personalNotes));
+closePersonalEdit();renderPersonal();alert('Düzəliş yadda saxlanıldı ✅');
+}
+function renderPersonal(){
+let q=(document.getElementById('searchPersonal').value||'').toLowerCase();
+let list=personalNotes.filter(n=>(n.title+n.text).toLowerCase().includes(q));
+let cEl=document.getElementById('cPersonal'); if(cEl) cEl.innerText='('+personalNotes.length+')';
+document.getElementById('personalList').innerHTML=!list.length?'<div class="empty">Hələ şəxsi qeyd yoxdur</div>':list.map(n=>{let idx=personalNotes.indexOf(n);return `<div class="note personal ${n.done?'done':''}"><h3>🔒 ${n.title} ${n.done?'✅':''}</h3><p>${n.text}</p><small>${n.date}</small><div class="btns">${n.done?`<button class="backBtn" onclick="togglePersonal(${idx})">↩ Geri Qaytar</button>`:`<button class="okBtn" onclick="togglePersonal(${idx})">✅ Tamamlandı</button>`}<button class="editBtn" onclick="openPersonalEdit(${idx})">✏️ Düzəliş</button><button class="delBtn" onclick="delPersonal(${idx})">Sil</button></div></div>`}).join('');
 }
 function getAutoMs(){return ((autoCfg.month||0)*30 + (autoCfg.day||0))*24*60*60*1000 + (autoCfg.hour||0)*60*60*1000 + (autoCfg.min||0)*60*1000}
 function setAuto(){autoCfg={min:parseInt(document.getElementById('autoMin').value)||0,hour:parseInt(document.getElementById('autoHour').value)||0,day:parseInt(document.getElementById('autoDay').value)||0,month:parseInt(document.getElementById('autoMonth').value)||0};localStorage.setItem('autoDelCfg',JSON.stringify(autoCfg));updateAutoInfo();}
@@ -478,7 +552,7 @@ document.getElementById('list').innerHTML=!filtered.length?'<div class="empty">H
 let totalUnpaid=salaries.filter(s=>!s.paid).reduce((a,s)=>a+s.total,0);
 document.getElementById('salaryList').innerHTML='<div style="margin-top:12px;font-weight:700">Bütün maaşlar • Ödənilməmiş cəmi: '+totalUnpaid.toFixed(2)+' ₼</div>'+(salaries.length?salaries.map((s,i)=>`<div class="salaryCard"><b>${s.paid?'✅ ':''}${s.name} - ${s.month}</b><div class="formula">${s.formula}</div><small>${s.date} • Veriləcək: ${s.total.toFixed(2)} ₼</small><div style="display:flex;gap:8px;margin-top:8px"><button class="paid" style="background:${s.paid?'#f59e0b':'#22c55e'}" onclick="togglePaid(${i})">${s.paid?'↩ Ödənilmədi':'✅ Maaş Verildi'}</button><button class="delBtn" onclick="delSalary(${i})">Sil</button></div></div>`).join(''):'<div class="empty">Hələ maaş hesablanmayıb</div>');
 }
-loadAutoInputs();calcPreview();render();renderExp();
+loadAutoInputs();calcPreview();render();renderExp();renderPersonal();
 setTimeout(()=>{checkRemind();checkCustomerRemind(false);}, 800);
 setInterval(()=>{ checkCustomerRemind(false); if(checkAutoDelete()){} else { let autoMs=getAutoMs(); if(autoMs>0 && notes.some(n=>n.done)) render(); } }, 10000);
 </script>

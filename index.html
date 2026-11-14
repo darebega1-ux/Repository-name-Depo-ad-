@@ -92,12 +92,20 @@ textarea{height:80px;resize:none}
 .editField{text-align:left}
 .editField label{font-size:13px;font-weight:700}
 .editField input,.editField textarea{margin-top:6px}
-.lockBox{background:#faf5ff;border:2px solid #a855f7;border-radius:16px;padding:22px;text-align:center}
-.lockBox input{font-size:22px;text-align:center;letter-spacing:6px;font-weight:900}
 .passBtn{background:#f5f5f5;border:1px solid #ddd;padding:10px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700}
-.passCard{background:#fff;border:1px solid #eee;border-radius:14px;padding:14px;margin-bottom:12px}
-.passCard h3{margin:0 0 4px;font-size:15px}
-.passCard p{margin:0 0 10px;font-size:12px;color:#888}
+/* YENİ - BÖLMƏLƏR ALT-ALTA, QABAĞINDA İKON */
+.passListWrap{display:flex;flex-direction:column;gap:12px}
+.passRow{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #eee;border-radius:16px;padding:12px;width:100%}
+.passRow.locked{border-color:#fecaca;background:#fef2f2}
+.passRow.open{border-color:#bbf7d0;background:#f0fdf4}
+.lockIconBtn{width:58px;height:58px;min-width:58px;border-radius:50%;border:none;font-size:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.lockIconBtn.openBg{background:#dcfce7}
+.lockIconBtn.lockedBg{background:#fee2e2}
+.passRowText{flex:1;text-align:left}
+.passRowText b{font-size:16px;display:block}
+.passRowText span{font-size:12px;color:#666}
+.passRowBtns{display:flex;flex-direction:column;gap:6px}
+.passSmallBtn{padding:8px 10px;border-radius:10px;border:1px solid #ddd;background:#fff;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -232,7 +240,6 @@ textarea{height:80px;resize:none}
 <div id="expList"></div>
 </div></div>
 
-<!-- ŞƏXSİ -->
 <div id="pagePersonal" style="display:none"><div class="box">
 <h2 style="margin:0 0 6px;font-size:18px">🔒 Şəxsi Qeydlərim</h2>
 <p style="font-size:13px;color:#888;margin:0 0 12px">Bura yalnız sənin üçündür.</p>
@@ -243,17 +250,36 @@ textarea{height:80px;resize:none}
 <div id="personalList"></div>
 </div></div>
 
-<!-- ŞİFRƏ AYARLARI - YENİ BÖLMƏ -->
+<!-- ŞİFRƏ AYARLARI - ALT-ALTA + İKON -->
 <div id="pagePass" style="display:none"><div class="box">
 <h2 style="margin:0 0 6px;font-size:18px">🔐 Bölmə Şifrələri</h2>
-<p style="font-size:13px;color:#888;margin:0 0 14px">İstədiyin bölməyə şifrə qoy. Şifrəli bölməyə girəndə şifrə soruşulacaq. Şifrəni siləndə bölmə yenə şifrəsiz açılacaq. Hər bölmənin şifrəsi ayrı ola bilər.</p>
-<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px;font-size:13px;margin-bottom:14px">⚠️ Şifrəni yadda saxla! Şifrə yalnız sənin telefonunda saxlanılır, heç kim bərpa edə bilməz. Unutsan mənə de, sıfırlama yolunu deyim.</div>
-<div id="passList"></div>
-<div style="display:flex;gap:8px;margin-top:12px">
+<p style="font-size:13px;color:#888;margin:0 0 14px">Hər bölmə alt-alta yazılıb. Qabağındakı ikona bas:<br>🔓 <b>AÇIQ</b> ikona bas → şifrə təyin et, Yadda Saxla bas → 🔒 BAĞLI olur<br>🔒 <b>BAĞLI</b> ikona bas → şifrəni yaz → şifrə silinir, yenə 🔓 AÇIQ olur</p>
+<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px;font-size:13px;margin-bottom:14px">⚠️ Şifrəni yadda saxla! Şifrə yalnız sənin telefonunda saxlanılır.</div>
+<div id="passList" class="passListWrap"></div>
+<div style="display:flex;gap:8px;margin-top:14px">
 <button class="rangeBtn" style="background:#fee2e2" onclick="lockAllSections()">🔒 Hamısını Bağla</button>
 <button class="rangeBtn" style="background:#dcfce7" onclick="unlockAllForNow()">🔓 Hamısını Aç (bu dəfəlik)</button>
 </div>
 </div></div>
+
+<!-- İKONLA ŞİFRƏ QOYMA MODALI -->
+<div class="modal" id="setPassModal">
+<div class="modalCard">
+<div style="font-size:44px" id="setPassIcon">🔓</div>
+<h3 id="setPassTitle">Şifrə Təyin Et</h3>
+<p id="setPassText">Bu bölməni şifrələmək üçün şifrə yaz</p>
+<div style="text-align:left">
+<label style="font-size:13px;font-weight:700">Yeni şifrə</label>
+<input id="setPass1" type="password" inputmode="numeric" placeholder="Məs: 1234" maxlength="8" style="font-size:20px;text-align:center;letter-spacing:4px">
+<label style="font-size:13px;font-weight:700">Şifrəni təkrarla</label>
+<input id="setPass2" type="password" inputmode="numeric" placeholder="Yenidən yaz" maxlength="8" style="font-size:20px;text-align:center;letter-spacing:4px">
+</div>
+<div style="display:flex;gap:8px">
+<button onclick="confirmSetPass()" style="flex:1;padding:13px;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">💾 Yadda Saxla</button>
+<button onclick="closeSetPass()" style="flex:1;padding:13px;background:#eee;border:none;border-radius:10px;font-weight:700;cursor:pointer">Ləğv et</button>
+</div>
+</div>
+</div>
 
 <!-- BÖLMƏ KİLİD MODALI -->
 <div class="modal" id="sectionLockModal">
@@ -362,22 +388,19 @@ let filter='all';
 let rangeActive=false; let rangeFrom='', rangeTo=''; let curType='expense';
 let autoCfg = JSON.parse(localStorage.getItem('autoDelCfg')||'{"min":0,"hour":0,"day":0,"month":0}');
 let currentCustIdx=-1; let highlightIdx=-1; let editIdx=-1; let editPersonalIdx=-1;
-// --- BÖLMƏ ŞİFRƏLƏRİ ---
 let oldPersonalPass = localStorage.getItem('personal_pass')||'';
 let sectionPass = JSON.parse(localStorage.getItem('section_pass')||'{}');
 if(oldPersonalPass && !sectionPass.personal){ sectionPass.personal=oldPersonalPass; localStorage.setItem('section_pass',JSON.stringify(sectionPass)); localStorage.removeItem('personal_pass'); }
 let sectionUnlocked = {notes:false, salary:false, exp:false, personal:false};
 let pendingSection = '';
+let pendingSetSection = '';
 let currentTab = 'notes';
 let sectionNames = {notes:'📝 Qeydlər', salary:'💰 Maaş Hesablanması', exp:'💰 Gəlir / Xərc', personal:'🔒 Şəxsi Qeydlərim'};
 
 function todayKey(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function monthKey(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
-function isLocked(sec){ return !!sectionPass[sec] && !sectionUnlocked[sec]; }
 function showTab(t){
-if(t==='pass'){
-doShowTab('pass'); renderPassList(); return;
-}
+if(t==='pass'){ doShowTab('pass'); renderPassList(); return; }
 if(sectionPass[t] && !sectionUnlocked[t]){
 pendingSection=t;
 document.getElementById('lockTitle').innerText = sectionNames[t]+' Bağlıdır';
@@ -416,63 +439,82 @@ document.getElementById('sectionLockInput').focus();
 }
 function cancelUnlock(){ pendingSection=''; document.getElementById('sectionLockModal').classList.remove('show'); }
 function lockAllSections(){ Object.keys(sectionPass).forEach(k=>{ if(sectionPass[k]) sectionUnlocked[k]=false; }); alert('Hamısı bağlandı 🔒'); renderPassList(); }
-function unlockAllForNow(){
-let any=false;
-Object.keys(sectionPass).forEach(k=>{ if(sectionPass[k]){ sectionUnlocked[k]=true; any=true; } });
-if(!any) alert('Heç bir bölmədə şifrə yoxdur');
-else alert('Hamısı bu dəfəlik açıldı ✅\nSaytı bağlayıb açsan yenidən şifrə soruşulacaq.');
+function unlockAllForNow(){ let any=false; Object.keys(sectionPass).forEach(k=>{ if(sectionPass[k]){ sectionUnlocked[k]=true; any=true; } }); if(!any) alert('Heç bir bölmədə şifrə yoxdur'); else alert('Hamısı bu dəfəlik açıldı ✅'); renderPassList(); }
+
+/* --- YENİ: İKONA BASANDA ŞİFRƏLƏ / AÇ --- */
+function toggleLockIcon(sec){
+let has = !!sectionPass[sec];
+if(!has){
+  // AÇIQ idi -> Şifrələ
+  pendingSetSection = sec;
+  document.getElementById('setPassIcon').innerText='🔓';
+  document.getElementById('setPassTitle').innerText = sectionNames[sec] + ' - Şifrə Təyin Et';
+  document.getElementById('setPassText').innerText = 'Bu bölməni bağlamaq üçün şifrə yaz. Sonra Yadda Saxla bas.';
+  document.getElementById('setPass1').value='';
+  document.getElementById('setPass2').value='';
+  document.getElementById('setPassModal').classList.add('show');
+  setTimeout(()=>document.getElementById('setPass1').focus(),300);
+} else {
+  // BAĞLI idi -> Şifrəni yaz, silinsin, AÇIQ olsun
+  let p = prompt(sectionNames[sec] + ' şifrəlidir 🔒\nŞifrəni silmək və AÇIQ etmək üçün şifrəni yaz:');
+  if(p===null) return;
+  if(p.trim() !== sectionPass[sec]) return alert('❌ Şifrə səhvdir!');
+  if(!confirm(sectionNames[sec] + ' - şifrə silinsin? Bölmə yenə şifrəsiz - AÇIQ olacaq.')) return;
+  delete sectionPass[sec];
+  sectionUnlocked[sec]=false;
+  localStorage.setItem('section_pass', JSON.stringify(sectionPass));
+  alert('✅ Şifrə silindi. Bölmə indi AÇIQdır 🔓');
+  renderPassList();
+}
+}
+function confirmSetPass(){
+let p1=document.getElementById('setPass1').value.trim();
+let p2=document.getElementById('setPass2').value.trim();
+if(p1.length<4) return alert('Şifrə ən azı 4 simvol olmalıdır!');
+if(p1!==p2) return alert('İki şifrə eyni deyil! Yenidən yaz.');
+sectionPass[pendingSetSection]=p1;
+sectionUnlocked[pendingSetSection]=false;
+localStorage.setItem('section_pass', JSON.stringify(sectionPass));
+document.getElementById('setPassModal').classList.remove('show');
+alert(sectionNames[pendingSetSection] + ' şifrələndi ✅\nİndi 🔒 BAĞLI-dır. Girəndə şifrə soruşulacaq.');
 renderPassList();
 }
+function closeSetPass(){ pendingSetSection=''; document.getElementById('setPassModal').classList.remove('show'); }
+
 function renderPassList(){
 let html='';
 Object.keys(sectionNames).forEach(sec=>{
 let has=!!sectionPass[sec];
-let unlocked=sectionUnlocked[sec];
-let status = !has ? '<span style="color:#16a34a;font-weight:700">🟢 Şifrəsiz - hamı girə bilər</span>' : (unlocked ? '<span style="color:#2563eb;font-weight:700">🔓 Şifrəlidir, indi açıqdır</span>' : '<span style="color:#dc2626;font-weight:700">🔒 Şifrəlidir, bağlıdır</span>');
-html+=`<div class="passCard"><h3>${sectionNames[sec]}</h3><p>${status}</p><div style="display:flex;gap:8px;flex-wrap:wrap">`+
-(has? `<button class="passBtn" style="flex:1" onclick="changeSectionPass('${sec}')">🔑 Şifrəni Dəyiş</button><button class="passBtn" style="flex:1" onclick="removeSectionPass('${sec}')">🗑️ Şifrəni Sil</button>` : `<button class="passBtn" style="flex:1;background:#7c3aed;color:#fff;border-color:#7c3aed" onclick="setSectionPass('${sec}')">🔐 Şifrə Qoy</button>`)+
-(has && !unlocked? `<button class="passBtn" style="flex:1;background:#22c55e;color:#fff;border-color:#22c55e" onclick="askUnlockFromSettings('${sec}')">🔓 Aç</button>` : '')+
-(has && unlocked? `<button class="passBtn" style="flex:1" onclick="lockOneSection('${sec}')">🔒 Bağla</button>` : '')+
-`</div></div>`;
+let icon = has ? '🔒' : '🔓';
+let bgClass = has ? 'lockedBg' : 'openBg';
+let rowClass = has ? 'locked' : 'open';
+let status = has ? '🔒 BAĞLI - Şifrəlidir. Girəndə şifrə soruşulur.' : '🔓 AÇIQ - Şifrəsizdir. İkona basıb şifrələ.';
+let statusColor = has ? '#dc2626' : '#16a34a';
+html+=`<div class="passRow ${rowClass}">
+<button class="lockIconBtn ${bgClass}" onclick="toggleLockIcon('${sec}')" title="Bas - şifrələ / aç">${icon}</button>
+<div class="passRowText"><b>${sectionNames[sec]}</b><span style="color:${statusColor};font-weight:700">${status}</span><br><span>İkona bas: ${has ? 'Şifrəni yaz → Sil → AÇIQ olur' : 'Şifrə yaz → Yadda Saxla → BAĞLI olur'}</span></div>
+<div class="passRowBtns">
+${has ? `<button class="passSmallBtn" onclick="changeSectionPass('${sec}')">🔑 Dəyiş</button>` : ``}
+${has ? `<button class="passSmallBtn" onclick="toggleLockIcon('${sec}')">🗑️ Şifrəni Sil</button>` : `<button class="passSmallBtn" style="background:#7c3aed;color:#fff;border-color:#7c3aed" onclick="toggleLockIcon('${sec}')">🔐 Şifrələ</button>`}
+</div>
+</div>`;
 });
 document.getElementById('passList').innerHTML=html;
 }
-function askUnlockFromSettings(sec){ pendingSection=sec; document.getElementById('lockTitle').innerText=sectionNames[sec]+' Bağlıdır'; document.getElementById('lockText').innerText='Açmaq üçün şifrəni yaz'; document.getElementById('sectionLockInput').value=''; document.getElementById('lockError').style.display='none'; document.getElementById('sectionLockModal').classList.add('show'); }
-function setSectionPass(sec){
-let p1=prompt(sectionNames[sec]+' üçün yeni şifrə yaz (ən azı 4 simvol):');
-if(p1===null) return;
-p1=p1.trim();
-if(p1.length<4) return alert('Şifrə ən azı 4 simvol olmalıdır!');
-let p2=prompt('Şifrəni yenidən yaz:');
-if(p2===null) return;
-if(p1!==p2.trim()) return alert('Şifrələr eyni deyil!');
-sectionPass[sec]=p1; sectionUnlocked[sec]=true;
-localStorage.setItem('section_pass',JSON.stringify(sectionPass));
-alert(sectionNames[sec]+' şifrələndi ✅\nİndi hər dəfə girəndə şifrə soruşulacaq.');
-renderPassList();
-}
+function setSectionPass(sec){ toggleLockIcon(sec); }
 function changeSectionPass(sec){
 let oldP=prompt('Köhnə şifrəni yaz:');
 if(oldP===null) return;
 if(oldP!==sectionPass[sec]) return alert('Köhnə şifrə səhvdir!');
-let np=prompt('Yeni şifrəni yaz (ən azı 4 simvol):');
-if(!np || np.trim().length<4) return alert('Şifrə ən azı 4 simvol olmalıdır!');
-let np2=prompt('Yeni şifrəni yenidən yaz:');
-if(np.trim()!==np2.trim()) return alert('Şifrələr eyni deyil!');
-sectionPass[sec]=np.trim(); sectionUnlocked[sec]=true;
-localStorage.setItem('section_pass',JSON.stringify(sectionPass));
-alert('Şifrə dəyişdirildi ✅'); renderPassList();
+pendingSetSection=sec;
+document.getElementById('setPassIcon').innerText='🔑';
+document.getElementById('setPassTitle').innerText = sectionNames[sec] + ' - Şifrəni Dəyiş';
+document.getElementById('setPassText').innerText = 'Yeni şifrəni yaz, Yadda Saxla bas.';
+document.getElementById('setPass1').value=''; document.getElementById('setPass2').value='';
+document.getElementById('setPassModal').classList.add('show');
 }
-function removeSectionPass(sec){
-let p=prompt('Şifrəni silmək üçün hazırkı şifrəni yaz:');
-if(p===null) return;
-if(p!==sectionPass[sec]) return alert('Şifrə səhvdir!');
-if(!confirm(sectionNames[sec]+' - şifrə silinsin? Bundan sonra bölmə şifrəsiz açılacaq.')) return;
-delete sectionPass[sec]; sectionUnlocked[sec]=false;
-localStorage.setItem('section_pass',JSON.stringify(sectionPass));
-alert('Şifrə silindi ✅ İndi bölmə şifrəsiz açılacaq.'); renderPassList();
-}
-function lockOneSection(sec){ sectionUnlocked[sec]=false; alert(sectionNames[sec]+' bağlandı 🔒'); renderPassList(); }
+function removeSectionPass(sec){ toggleLockIcon(sec); }
+function lockOneSection(sec){ sectionUnlocked[sec]=false; renderPassList(); }
 
 function openMenu(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show')}
 function closeMenu(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
@@ -570,8 +612,6 @@ document.getElementById('allInc').innerText='+'+a.inc.toFixed(2)+' ₼';
 document.getElementById('allExp').innerText='-'+a.exp.toFixed(2)+' ₼';
 document.getElementById('allBal').innerText=a.bal.toFixed(2)+' ₼';
 document.getElementById('todayLabel').innerText='Bu gün: '+new Date().toLocaleDateString('az-AZ');
-document.getElementById('cExpToday').innerText='(Qalıq '+t.bal.toFixed(0)+' ₼)';
-document.getElementById('cExpMonth').innerText='(Qalıq '+m.bal.toFixed(0)+' ₼)';
 let fM=document.getElementById('filterMonth').value;
 let fC=document.getElementById('filterCat').value;
 let fT=document.getElementById('filterType').value;

@@ -2,31 +2,25 @@
 <html lang="az">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Dükkan</title>
-
-<!-- IPHONE APP REJİMİ - BAŞLANĞIC -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Dükkan">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#000000">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='black'/><text x='50' y='68' font-size='55' text-anchor='middle'>🛒</text></svg>">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='black'/><text x='50' y='68' font-size='55' text-anchor='middle'>🛒</text></svg>">
-<!-- IPHONE APP REJİMİ - SON -->
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dükkan Proqramı</title>
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f2f2f2;padding-bottom:70px;padding-top:env(safe-area-inset-top);padding-bottom:calc(70px + env(safe-area-inset-bottom))}
-.topbar{background:#fff;display:flex;flex-direction:column;gap:8px;padding:calc(14px + env(safe-area-inset-top)) 10px 10px 10px;box-shadow:0 1px 5px rgba(0,0,0,.1);position:sticky;top:0;z-index:10}
-.topRow{display:flex;align-items:center;gap:8px;width:100%}
-.menuBtn{font-size:22px;background:none;border:none;cursor:pointer;flex-shrink:0;padding:2px}
-.topbar h1{font-size:17px;margin:0;flex:1;white-space:nowrap}
-.tabRow{display:flex;gap:6px;width:100%;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
-.tabRow::-webkit-scrollbar{display:none}
-.tabBtn{padding:7px 11px;border-radius:20px;border:1px solid #ddd;background:#f5f5f5;cursor:pointer;font-size:12px;flex-shrink:0;white-space:nowrap}
-.tabBtn.active{background:#000;color:#fff}
-@media(max-width:500px){.topbar h1{font-size:15px}.tabBtn{font-size:12px!important;padding:7px 10px!important}}
+body{margin:0;background:#f2f2f2;overflow-x:hidden}
+.topbar{background:#fff;display:flex;align-items:center;gap:10px;padding:12px 14px;box-shadow:0 1px 5px rgba(0,0,0,.1);position:sticky;top:0;z-index:20}
+.menuBtn{font-size:24px;background:none;border:none;cursor:pointer;flex-shrink:0}
+.topbar h1{font-size:19px;margin:0;flex:1;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.logoIcon{width:36px;height:36px;min-width:36px;border-radius:11px;background:linear-gradient(135deg,#4f46e5,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:20px}
+.tabBar{background:#fff;display:flex;gap:8px;padding:0 12px 10px;overflow-x:auto;white-space:nowrap;scrollbar-width:none;position:sticky;top:60px;z-index:19}
+.tabBar::-webkit-scrollbar{display:none}
+.tabBtn{flex-shrink:0;padding:6px 12px 6px 6px;border-radius:999px;border:1px solid #ddd;background:#f5f5f5;cursor:pointer;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.tabBtn.active{background:#000;color:#fff;border-color:#000}
+.tabIcon{width:28px;height:28px;min-width:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0}
+.iconNotes{background:linear-gradient(135deg,#3b82f6,#06b6d4)}
+.iconSalary{background:linear-gradient(135deg,#16a34a,#4ade80)}
+.iconMoney{background:linear-gradient(135deg,#f59e0b,#f97316)}
+.iconLock{background:linear-gradient(135deg,#7c3aed,#ec4899)}
+.iconIdea{background:linear-gradient(135deg,#25D366,#128C7E)}
 .box{max-width:620px;margin:auto;background:#fff;border-radius:15px;padding:18px;margin-top:15px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
 input,textarea,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin-bottom:10px;font-size:15px;outline:none}
 textarea{height:80px;resize:none}
@@ -47,7 +41,7 @@ textarea{height:80px;resize:none}
 .empty{text-align:center;color:#999;margin-top:20px}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20}
 .overlay.show{display:block}
-.sidebar{position:fixed;top:0;left:-300px;width:280px;height:100%;background:#fff;z-index:30;transition:.3s;padding:16px;overflow:auto;padding-top:calc(16px + env(safe-area-inset-top))}
+.sidebar{position:fixed;top:0;left:-300px;width:280px;height:100%;background:#fff;z-index:30;transition:.3s;padding:16px;overflow:auto}
 .sidebar.open{left:0}
 .sidebar .close{float:right;background:none;border:none;font-size:20px;cursor:pointer}
 .oneBox{border:1px solid #eee;border-radius:12px;overflow:hidden;margin-bottom:10px}
@@ -103,55 +97,41 @@ textarea{height:80px;resize:none}
 .editField{text-align:left}
 .editField label{font-size:13px;font-weight:700}
 .editField input,.editField textarea{margin-top:6px}
-.passBtn{background:#f5f5f5;border:1px solid #ddd;padding:10px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700}
-.passListWrap{display:flex;flex-direction:column;gap:12px}
-.passRow{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #eee;border-radius:16px;padding:12px;width:100%}
-.passRow.locked{border-color:#fecaca;background:#fef2f2}
-.passRow.open{border-color:#bbf7d0;background:#f0fdf4}
-.lockIconBtn{width:58px;height:58px;min-width:58px;border-radius:50%;border:none;font-size:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.12)}
-.lockIconBtn.openBg{background:#dcfce7}
-.lockIconBtn.lockedBg{background:#fee2e2}
-.passRowText{flex:1;text-align:left}
-.passRowText b{font-size:16px;display:block}
-.passRowText span{font-size:12px;color:#666}
-.passRowBtns{display:flex;flex-direction:column;gap:6px}
-.passSmallBtn{padding:8px 10px;border-radius:10px;border:1px solid #ddd;background:#fff;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
-.recoveryBox{background:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:14px;margin-bottom:14px}
-.remindWrap{background:#fef9c3;border:1px solid #fde047;border-radius:12px;padding:12px;margin-bottom:10px}
-.remindWrap label{display:block;font-size:13px;font-weight:700;margin-bottom:8px}
-.remindWrap input[type="datetime-local"]{display:block;width:100%;background:#fff;margin-bottom:8px}
-.remindWrap .remBtns{display:flex;gap:8px}
-.remindWrap .remBtns button{flex:1}
+/* TƏKLİFLƏR */
+.suggestHero{background:linear-gradient(135deg,#25D366,#128C7E);border-radius:16px;padding:18px;color:#fff;text-align:center}
+.suggestHero h2{margin:0 0 6px;font-size:20px}
+.suggestHero p{margin:0;font-size:14px;opacity:.95}
+.waBig{display:block;text-align:center;background:#25D366;color:#fff;padding:15px;border-radius:12px;font-weight:800;font-size:17px;text-decoration:none;margin-top:12px}
+.waBig small{display:block;font-weight:400;font-size:13px;margin-top:3px}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-<div class="topRow">
 <button class="menuBtn" onclick="openMenu()">☰</button>
-<h1>🛒 Dükkan</h1>
+<h1><span class="logoIcon">🏪</span> Dükkan</h1>
 </div>
-<div class="tabRow">
-<button class="tabBtn active" id="tabNotes" onclick="showTab('notes')">Qeydlər</button>
-<button class="tabBtn" id="tabSalary" onclick="showTab('salary')">💰 Maaş</button>
-<button class="tabBtn" id="tabExp" onclick="showTab('exp')">💰 Gəlir / Xərc</button>
-<button class="tabBtn" id="tabPersonal" onclick="showTab('personal')">🔒 Şəxsi</button>
-<button class="tabBtn" id="tabPass" onclick="showTab('pass')">🔐 Şifrə Ayarları</button>
-</div>
+<div class="tabBar">
+<button class="tabBtn active" id="tabNotes" onclick="showTab('notes')"><span class="tabIcon iconNotes">📝</span>Qeydlər</button>
+<button class="tabBtn" id="tabSalary" onclick="showTab('salary')"><span class="tabIcon iconSalary">💵</span>Maaş Hesablanması</button>
+<button class="tabBtn" id="tabExp" onclick="showTab('exp')"><span class="tabIcon iconMoney">💰</span>Gəlir / Xərc</button>
+<button class="tabBtn" id="tabPersonal" onclick="showTab('personal')"><span class="tabIcon iconLock">🔒</span>Şəxsi Qeydlərim</button>
+<button class="tabBtn" id="tabSuggest" onclick="showTab('suggest')"><span class="tabIcon iconIdea">💡</span>Təkliflər</button>
 </div>
 
+<!-- QEYDLƏR -->
 <div id="pageNotes"><div class="box">
 <input id="title" placeholder="Nə qeyd edirsən? Məs: Müştəriyə süd...">
 <textarea id="text" placeholder="Ətraflı yaz..."></textarea>
-<div class="remindWrap">
-<label>🔔 Qeydi nə vaxt xatırladım?</label>
-<input id="remindAt" type="datetime-local">
-<div class="remBtns">
+<div style="background:#fef9c3;border:1px solid #fde047;border-radius:12px;padding:12px;margin-bottom:10px">
+<label style="font-size:13px;font-weight:700">🔔 Qeydi nə vaxt xatırladım?</label>
+<input id="remindAt" type="datetime-local" style="margin-top:8px;margin-bottom:6px">
+<div style="display:flex;gap:8px">
 <button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="setRemindQuick(60)">1 saat sonra</button>
 <button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="setRemindQuick(24*60)">Sabah eyni vaxt</button>
 <button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="clearRemind()">Xatırlatma yox</button>
 </div>
-<div style="font-size:12px;color:#666;margin-top:6px">Boş qoysan xatırlatma gəlməyəcək.</div>
+<div style="font-size:12px;color:#666;margin-top:6px">Boş qoysan xatırlatma gəlməyəcək. Doldursan həmin tarixdə bildiriş çıxacaq.</div>
 </div>
 <button class="addBtn" onclick="addNote()">+ Qeyd Et</button>
 <div class="autoBox">
@@ -172,8 +152,9 @@ textarea{height:80px;resize:none}
 </div>
 <div id="list"></div></div></div>
 
+<!-- MAAŞ -->
 <div id="pageSalary" style="display:none"><div class="box">
-<h2 style="margin:0 0 12px;font-size:18px">💰 Maaş Hesablanması</h2>
+<h2 style="margin:0 0 12px;font-size:18px;display:flex;align-items:center;gap:10px"><span class="tabIcon iconSalary" style="width:38px;height:38px;font-size:20px">💵</span> Maaş Hesablanması</h2>
 <input id="empName" placeholder="İşçinin adı: Məs: Cabrayil">
 <div class="row"><div><label>Günlük maaş (₼)</label><input id="daily" type="number" inputmode="numeric" value="30" oninput="calcPreview()"></div><div><label>İşlədiyi gün</label><input id="days" type="number" inputmode="numeric" value="20" oninput="calcPreview()"></div></div>
 <div class="row"><div><label>Avans (₼)</label><input id="advance" type="number" inputmode="numeric" value="0" oninput="calcPreview()"></div><div><label>Bonus (₼)</label><input id="bonus" type="number" inputmode="numeric" value="0" oninput="calcPreview()"></div></div>
@@ -183,6 +164,7 @@ textarea{height:80px;resize:none}
 <button class="addBtn" style="background:#22c55e;margin-top:12px" onclick="saveSalary()">✓ Maaşı Yadda Saxla</button>
 <div id="salaryList"></div></div></div>
 
+<!-- GƏLİR / XƏRC -->
 <div id="pageExp" style="display:none"><div class="box">
 <h2 style="margin:0 0 6px;font-size:18px">💰 Gəlir / Xərc</h2>
 <p style="font-size:12px;color:#888;margin:0 0 12px" id="todayLabel"></p>
@@ -256,9 +238,11 @@ textarea{height:80px;resize:none}
 <div id="expList"></div>
 </div></div>
 
+<!-- ŞƏXSİ -->
 <div id="pagePersonal" style="display:none"><div class="box">
-<h2 style="margin:0 0 6px;font-size:18px">🔒 Şəxsi Qeydlərim</h2>
-<p style="font-size:13px;color:#888;margin:0 0 12px">Bura yalnız sənin üçündür.</p>
+<h2 style="margin:0 0 6px;font-size:18px;display:flex;align-items:center;gap:10px"><span class="tabIcon iconLock" style="width:38px;height:38px;font-size:20px">🔒</span> Şəxsi Qeydlərim</h2>
+<p style="font-size:13px;color:#888;margin:0 0 12px">Bura yalnız sənin üçündür. Dükkan qeydlərindən ayrı saxlanılır.</p>
+<div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:12px;padding:12px;margin-bottom:10px;font-size:13px;color:#6b21a8">💜 Şəxsi işlərin, fikirlərin - sadəcə öz qeydlərin. Heç kim görmür.</div>
 <input id="personalTitle" placeholder="Başlıq: Məs: Sabah həkimə get...">
 <textarea id="personalText" placeholder="Ətraflı yaz..."></textarea>
 <button class="addBtn" style="background:#7c3aed" onclick="addPersonal()">+ Şəxsi Qeyd Əlavə Et</button>
@@ -266,79 +250,33 @@ textarea{height:80px;resize:none}
 <div id="personalList"></div>
 </div></div>
 
-<div id="pagePass" style="display:none"><div class="box">
-<h2 style="margin:0 0 6px;font-size:18px">🔐 Bölmə Şifrələri</h2>
-<p style="font-size:13px;color:#888;margin:0 0 14px">Hər bölmə alt-alta. Qabağındakı ikona bas:<br>🔓 AÇIQ → şifrə yaz → Yadda Saxla → 🔒 BAĞLI<br>🔒 BAĞLI → şifrəni yaz → silinir → 🔓 AÇIQ</p>
-<div class="recoveryBox">
-<h3 style="margin:0 0 6px;font-size:15px">🆘 Şifrəni Unutsan - Gizli Söz</h3>
-<p style="font-size:12px;color:#555;margin:0 0 10px" id="recoveryStatus">Hələ Gizli Söz qoymamısan. Şifrəni unutsan bərpa edə bilməyəcəksən! İndi qoy.</p>
-<div style="display:flex;gap:8px">
-<input id="recoveryInput" placeholder="Gizli Söz yaz - məs: anamın adı" style="margin:0">
-<button onclick="saveRecoveryWord()" style="padding:12px 14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;white-space:nowrap">💾 Yadda Saxla</button>
+<!-- YENİ - TƏKLİFLƏR -->
+<div id="pageSuggest" style="display:none"><div class="box">
+<div class="suggestHero">
+<div style="font-size:42px">💡</div>
+<h2>Təkliflər Bölməsi</h2>
+<p>Fikrin var? Dükkanda nəyi dəyişək? Nə əlavə edək? Bura yaz, mənə çatsın!</p>
 </div>
-<div style="font-size:12px;color:#666;margin-top:6px">Məs: uşaqlıq ləqəbin, ilk itin adı, sevdiyin yemək. Yalnız sən biləcəyin söz seç. Bu sözlə şifrəni sıfırlaya biləcəksən.</div>
-<div style="display:flex;gap:8px;margin-top:8px">
-<button class="passSmallBtn" onclick="changeRecoveryWord()">✏️ Gizli Sözü Dəyiş</button>
-<button class="passSmallBtn" onclick="forgotAllWithRecovery()">🆘 Şifrəni unutdum - Gizli Sözlə Aç</button>
-</div>
-</div>
-<div id="passList" class="passListWrap"></div>
-<div style="display:flex;gap:8px;margin-top:14px">
-<button class="rangeBtn" style="background:#fee2e2" onclick="lockAllSections()">🔒 Hamısını Bağla</button>
-<button class="rangeBtn" style="background:#dcfce7" onclick="unlockAllForNow()">🔓 Hamısını Aç (bu dəfəlik)</button>
+
+<input id="suggestName" placeholder="Adın (istəyə bağlı) - Məs: Elvin" style="margin-top:14px">
+<select id="suggestTopic">
+<option>💡 Ümumi təklif</option>
+<option>🛒 Hansı mal gətirim?</option>
+<option>💰 Qiymətlə bağlı</option>
+<option>🏪 Dükkanla bağlı</option>
+<option>📱 Proqramla bağlı</option>
+<option>❤️ Təşəkkür / Tərif</option>
+</select>
+<textarea id="suggestText" placeholder="Təklifini bura yaz... Məs: Sabah təzə çörək gətir, çox adam soruşur..." style="height:110px"></textarea>
+
+<a class="waBig" href="#" onclick="sendSuggest(event)">💬 WhatsApp-la Göndər<small>Təklifin srazu mənə yazılacaq - +994 55 800 16 01</small></a>
+
+<a href="tel:+994558001601" style="display:block;text-align:center;background:#111;color:#fff;padding:14px;border-radius:12px;font-weight:700;text-decoration:none;margin-top:10px">📞 Zəng Et - +994 55 800 16 01</a>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:12px;margin-top:12px;font-size:13px;color:#166534;text-align:center">
+✅ Göndər basan kimi WhatsApp açılır, təklifin hazır yazılmış olur.<br>Sən sadəcə <b>Göndər ➤</b> basırsan.
 </div>
 </div></div>
-
-<div class="modal" id="setPassModal">
-<div class="modalCard">
-<div style="font-size:44px" id="setPassIcon">🔓</div>
-<h3 id="setPassTitle">Şifrə Təyin Et</h3>
-<p id="setPassText">Bu bölməni şifrələmək üçün şifrə yaz</p>
-<div style="text-align:left">
-<label style="font-size:13px;font-weight:700">Yeni şifrə</label>
-<input id="setPass1" type="password" inputmode="numeric" placeholder="Məs: 1234" maxlength="8" style="font-size:20px;text-align:center;letter-spacing:4px">
-<label style="font-size:13px;font-weight:700">Şifrəni təkrarla</label>
-<input id="setPass2" type="password" inputmode="numeric" placeholder="Yenidən yaz" maxlength="8" style="font-size:20px;text-align:center;letter-spacing:4px">
-<label style="font-size:13px;font-weight:700">💡 İpucu (istəyə bağlı)</label>
-<input id="setPassHint" placeholder="Məs: doğum ilim" style="font-size:14px">
-</div>
-<div style="display:flex;gap:8px">
-<button onclick="confirmSetPass()" style="flex:1;padding:13px;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">💾 Yadda Saxla</button>
-<button onclick="closeSetPass()" style="flex:1;padding:13px;background:#eee;border:none;border-radius:10px;font-weight:700;cursor:pointer">Ləğv et</button>
-</div>
-</div>
-</div>
-
-<div class="modal" id="sectionLockModal">
-<div class="modalCard">
-<div style="font-size:44px">🔒</div>
-<h3 id="lockTitle">Bölmə Bağlıdır</h3>
-<p id="lockText">Açmaq üçün şifrəni yaz</p>
-<p id="lockHint" style="background:#fef9c3;border:1px solid #fde047;border-radius:10px;padding:8px;font-size:13px;display:none"></p>
-<input id="sectionLockInput" type="password" inputmode="numeric" placeholder="••••" style="font-size:22px;text-align:center;letter-spacing:6px;font-weight:900">
-<p id="lockError" style="color:#dc2626;font-size:13px;font-weight:700;display:none">❌ Şifrə səhvdir!</p>
-<div style="display:flex;gap:8px">
-<button onclick="doUnlockSection()" style="flex:1;padding:13px;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">🔓 Aç</button>
-<button onclick="cancelUnlock()" style="flex:1;padding:13px;background:#eee;border:none;border-radius:10px;font-weight:700;cursor:pointer">Ləğv et</button>
-</div>
-<button onclick="forgotOneSection()" style="width:100%;padding:12px;background:#fff;border:1px solid #ddd;border-radius:10px;font-weight:700;cursor:pointer;margin-top:8px">🆘 Şifrəni Unutdum? Gizli Sözlə Aç</button>
-<button onclick="showHint()" style="width:100%;padding:12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;font-weight:700;cursor:pointer;margin-top:8px">💡 İpucunu Göstər</button>
-</div>
-</div>
-
-<div class="modal" id="recoverModal">
-<div class="modalCard">
-<div style="font-size:44px">🆘</div>
-<h3 id="recoverTitle">Şifrəni Bərpa Et</h3>
-<p id="recoverText">Gizli Sözü yaz, şifrəni sıfırlayım</p>
-<input id="recoverInput" placeholder="Gizli Sözü yaz..." style="font-size:16px;text-align:center">
-<p id="recoverError" style="color:#dc2626;font-size:13px;font-weight:700;display:none">❌ Gizli Söz səhvdir!</p>
-<div style="display:flex;gap:8px">
-<button onclick="confirmRecover()" style="flex:1;padding:13px;background:#dc2626;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">✅ Təsdiqlə</button>
-<button onclick="closeRecover()" style="flex:1;padding:13px;background:#eee;border:none;border-radius:10px;font-weight:700;cursor:pointer">Ləğv et</button>
-</div>
-</div>
-</div>
 
 <div class="modal" id="remindModal">
 <div class="modalCard">
@@ -350,6 +288,7 @@ textarea{height:80px;resize:none}
 <button onclick="remindDeleteAll()" style="flex:1;padding:13px;background:#dc2626;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">Bəli, Sil ✅</button>
 <button onclick="remindKeep()" style="flex:1;padding:13px;background:#eee;border:none;border-radius:10px;font-weight:700;cursor:pointer">Xeyr, Saxla ❌</button>
 </div>
+<p style="font-size:11px;color:#999;margin-top:10px">Xeyr bassan, 24 saatdan sonra yenidən soruşacam.</p>
 </div>
 </div>
 
@@ -360,34 +299,36 @@ textarea{height:80px;resize:none}
 <p id="custText"></p>
 <div class="remList" id="custList"></div>
 <div class="snoozeBox">
-<label>⏰ Sonra xatırlat:</label>
+<label>⏰ Sonra xatırlat - istəyə bağlı tarix seç:</label>
 <input id="snoozeAt" type="datetime-local">
 <div style="display:flex;gap:8px;margin-top:6px">
 <button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="setSnoozeQuick(60)">1 saat sonra</button>
 <button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="setSnoozeQuick(24*60)">Sabah</button>
 <button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="document.getElementById('snoozeAt').value=''">Təmizlə</button>
 </div>
+<div style="font-size:12px;color:#666;margin-top:6px">Tarix seçməsən, avtomatik <b>1 saatdan sonra</b> yenidən xatırladacam.</div>
 </div>
 <div style="display:flex;gap:8px">
 <button onclick="goToNote()" style="flex:1;padding:13px;background:#000;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">📝 Qeydə Get</button>
 <button onclick="closeCustomerModal(true)" style="flex:1;padding:13px;background:#22c55e;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">✅ Tamamlandı</button>
 </div>
-<button onclick="closeCustomerModal(false)" style="width:100%;padding:13px;background:#f59e0b;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;margin-top:8px">⏰ Sonra Xatırlat</button>
+<button onclick="closeCustomerModal(false)" style="width:100%;padding:13px;background:#f59e0b;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;margin-top:8px">⏰ Sonra Xatırlat - 2 rol</button>
 </div>
 </div>
 
 <div class="modal" id="editModal">
 <div class="modalCard" style="text-align:left">
 <h3 style="text-align:center">✏️ Qeydi Düzəlt</h3>
-<div class="editField"><label>Başlıq</label><input id="editTitle"></div>
-<div class="editField"><label>Yazı</label><textarea id="editText" style="height:90px"></textarea></div>
-<div class="editField"><label>🔔 Xatırlatma</label><input id="editRemind" type="datetime-local"></div>
+<div class="editField"><label>Başlıq / Qeyd adı</label><input id="editTitle" placeholder="Başlıq"></div>
+<div class="editField"><label>İçərisi - Ətraflı yazı</label><textarea id="editText" placeholder="Ətraflı yaz..." style="height:90px"></textarea></div>
+<div class="editField"><label>🔔 Xatırlatma tarixi</label><input id="editRemind" type="datetime-local"></div>
 <div style="display:flex;gap:8px">
 <button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="setEditRemindQuick(60)">1 saat sonra</button>
 <button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="setEditRemindQuick(24*60)">Sabah</button>
-<button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="document.getElementById('editRemind').value=''">Yox</button>
+<button class="rangeBtn" style="background:#fff;border:1px solid #ddd" onclick="document.getElementById('editRemind').value=''">Xatırlatma yox</button>
 </div>
-<div style="display:flex;gap:8px;margin-top:10px">
+<div style="font-size:12px;color:#888;margin:8px 0">Xatırlatmanı silsən, bildiriş gəlməyəcək.</div>
+<div style="display:flex;gap:8px">
 <button onclick="saveEdit()" style="flex:1;padding:13px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">💾 Yadda Saxla</button>
 <button onclick="closeEdit()" style="flex:1;padding:13px;background:#eee;border:none;border-radius:10px;font-weight:700;cursor:pointer">Ləğv et</button>
 </div>
@@ -397,8 +338,8 @@ textarea{height:80px;resize:none}
 <div class="modal" id="editPersonalModal">
 <div class="modalCard" style="text-align:left">
 <h3 style="text-align:center">✏️ Şəxsi Qeydi Düzəlt</h3>
-<div class="editField"><label>Başlıq</label><input id="editPersonalTitle"></div>
-<div class="editField"><label>Yazı</label><textarea id="editPersonalText" style="height:90px"></textarea></div>
+<div class="editField"><label>Başlıq</label><input id="editPersonalTitle" placeholder="Başlıq"></div>
+<div class="editField"><label>Yazı</label><textarea id="editPersonalText" placeholder="Ətraflı yaz..." style="height:90px"></textarea></div>
 <div style="display:flex;gap:8px">
 <button onclick="savePersonalEdit()" style="flex:1;padding:13px;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">💾 Yadda Saxla</button>
 <button onclick="closePersonalEdit()" style="flex:1;padding:13px;background:#eee;border:none;border-radius:10px;font-weight:700;cursor:pointer">Ləğv et</button>
@@ -411,14 +352,14 @@ textarea{height:80px;resize:none}
 <button class="close" onclick="closeMenu()">✕</button>
 <h2 style="margin:0 0 12px">☰ Menyu</h2>
 <div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box1','arrow1')"><span>📝 Qeydlərim</span><span id="arrow1">▼</span></div><div class="oneBoxBody" id="box1">
-<button class="subBtn" onclick="setFilter('all')">📋 Hamısı <span id="cAll"></span></button>
-<button class="subBtn" onclick="setFilter('active')">⏳ Bitməmişlər <span id="cActive"></span></button>
-<button class="subBtn" onclick="setFilter('done')">✅ Bitmişlər <span id="cDone"></span></button>
+<button class="subBtn active" id="btnAll" onclick="setFilter('all')">📋 Hamısı <span id="cAll"></span></button>
+<button class="subBtn" id="btnActive" onclick="setFilter('active')">⏳ Bitməmişlər <span id="cActive"></span></button>
+<button class="subBtn" id="btnDone" onclick="setFilter('done')">✅ Bitmişlər <span id="cDone"></span></button>
 <button class="subBtn" onclick="showTab('notes');closeMenu();checkCustomerRemind(true)">🔔 Xatırlatmalar <span id="cRemind"></span></button></div></div>
-<div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box2','arrow2')"><span>💰 Maaş</span><span id="arrow2">▼</span></div><div class="oneBoxBody" id="box2"><button class="subBtn" onclick="showTab('salary');closeMenu()">💰 Maaş Hesablanması</button></div></div>
-<div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box3','arrow3')"><span>💰 Gəlir / Xərc</span><span id="arrow3">▼</span></div><div class="oneBoxBody" id="box3"><button class="subBtn" onclick="showTab('exp');closeMenu()">💰 Gəlir / Xərc Yaz</button></div></div>
-<div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box4','arrow4')"><span>🔒 Şəxsi</span><span id="arrow4">▼</span></div><div class="oneBoxBody" id="box4"><button class="subBtn" onclick="showTab('personal');closeMenu()">🔒 Şəxsi Qeydlərim <span id="cPersonal"></span></button></div></div>
-<div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box5','arrow5')"><span>🔐 Şifrə Ayarları</span><span id="arrow5">▼</span></div><div class="oneBoxBody" id="box5"><button class="subBtn" onclick="showTab('pass');closeMenu()">🔐 Bölmə Şifrələri</button></div></div>
+<div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box2','arrow2')"><span>💵 Maaş Hesablanması</span><span id="arrow2">▼</span></div><div class="oneBoxBody" id="box2"><button class="subBtn" onclick="showTab('salary');closeMenu()">💵 Maaş Hesablanması</button></div></div>
+<div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box3','arrow3')"><span>💰 Gəlir / Xərc</span><span id="arrow3">▼</span></div><div class="oneBoxBody" id="box3"><button class="subBtn" onclick="showTab('exp');closeMenu()">💰 Gəlir / Xərc Yaz</button><button class="subBtn" onclick="showTab('exp');closeMenu()">📅 Bu ay <span id="cExpMonth"></span></button><button class="subBtn" onclick="showTab('exp');closeMenu()">📊 Bu gün <span id="cExpToday"></span></button></div></div>
+<div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box4','arrow4')"><span>🔒 Şəxsi Qeydlərim</span><span id="arrow4">▼</span></div><div class="oneBoxBody" id="box4"><button class="subBtn" onclick="showTab('personal');closeMenu()">🔒 Şəxsi Qeydlərim <span id="cPersonal"></span></button></div></div>
+<div class="oneBox"><div class="oneBoxHead" onclick="toggleBox('box5','arrow5')"><span>💡 Təkliflər</span><span id="arrow5">▼</span></div><div class="oneBoxBody" id="box5"><button class="subBtn" onclick="showTab('suggest');closeMenu()">💡 Təklif Yaz - WhatsApp</button></div></div>
 <input id="search" placeholder="🔍 Qeydlərdə axtar..." oninput="render()" style="padding:10px;border:1px solid #ddd;border-radius:10px;width:100%">
 </div>
 
@@ -429,217 +370,41 @@ let expenses = JSON.parse(localStorage.getItem('expenses_v1')||'[]');
 let personalNotes = JSON.parse(localStorage.getItem('personal_notes')||'[]');
 expenses = expenses.map(e=>({...e, type:e.type||'expense'}));
 let filter='all';
-let rangeActive=false; let rangeFrom='', rangeTo=''; let curType='expense';
+let rangeActive=false;
+let rangeFrom='', rangeTo='';
+let curType='expense';
 let autoCfg = JSON.parse(localStorage.getItem('autoDelCfg')||'{"min":0,"hour":0,"day":0,"month":0}');
-let currentCustIdx=-1; let highlightIdx=-1; let editIdx=-1; let editPersonalIdx=-1;
-let oldPersonalPass = localStorage.getItem('personal_pass')||'';
-let sectionPass = JSON.parse(localStorage.getItem('section_pass')||'{}');
-if(oldPersonalPass && !sectionPass.personal){ sectionPass.personal=oldPersonalPass; localStorage.setItem('section_pass',JSON.stringify(sectionPass)); localStorage.removeItem('personal_pass'); }
-let sectionHint = JSON.parse(localStorage.getItem('section_hint')||'{}');
-let recoveryWord = localStorage.getItem('recovery_word')||'';
-let sectionUnlocked = {notes:false, salary:false, exp:false, personal:false};
-let pendingSection = '';
-let pendingSetSection = '';
-let recoverTarget = 'all';
-let currentTab = 'notes';
-let sectionNames = {notes:'📝 Qeydlər', salary:'💰 Maaş Hesablanması', exp:'💰 Gəlir / Xərc', personal:'🔒 Şəxsi Qeydlərim'};
+let currentCustIdx = -1;
+let highlightIdx = -1;
+let editIdx = -1;
+let editPersonalIdx = -1;
 function todayKey(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function monthKey(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
 function showTab(t){
-if(t==='pass'){ doShowTab('pass'); renderPassList(); updateRecoveryUI(); return; }
-if(sectionPass[t] && !sectionUnlocked[t]){
-pendingSection=t;
-document.getElementById('lockTitle').innerText = sectionNames[t]+' Bağlıdır';
-document.getElementById('lockText').innerText = sectionNames[t]+' bölməsini açmaq üçün şifrəni yaz';
-document.getElementById('sectionLockInput').value='';
-document.getElementById('lockError').style.display='none';
-document.getElementById('lockHint').style.display='none';
-document.getElementById('sectionLockModal').classList.add('show');
-setTimeout(()=>document.getElementById('sectionLockInput').focus(),300);
-return;
-}
-doShowTab(t);
-}
-function doShowTab(t){
-currentTab=t;
-let map={notes:'Notes',salary:'Salary',exp:'Exp',personal:'Personal',pass:'Pass'};
-['notes','salary','exp','personal','pass'].forEach(x=>document.getElementById('page'+map[x]).style.display=x===t?'block':'none');
+let map={notes:'Notes',salary:'Salary',exp:'Exp',personal:'Personal',suggest:'Suggest'};
+['notes','salary','exp','personal','suggest'].forEach(x=>document.getElementById('page'+map[x]).style.display=x===t?'block':'none');
 document.getElementById('tabNotes').classList.toggle('active',t==='notes');
 document.getElementById('tabSalary').classList.toggle('active',t==='salary');
 document.getElementById('tabExp').classList.toggle('active',t==='exp');
 document.getElementById('tabPersonal').classList.toggle('active',t==='personal');
-document.getElementById('tabPass').classList.toggle('active',t==='pass');
+document.getElementById('tabSuggest').classList.toggle('active',t==='suggest');
 render();renderExp();renderPersonal();if(t==='notes'){checkRemind();checkCustomerRemind(false);}
 }
-function doUnlockSection(){
-let v=document.getElementById('sectionLockInput').value.trim();
-if(v===sectionPass[pendingSection]){
-sectionUnlocked[pendingSection]=true;
-document.getElementById('sectionLockModal').classList.remove('show');
-let t=pendingSection; pendingSection='';
-doShowTab(t);
-} else {
-document.getElementById('lockError').style.display='block';
-document.getElementById('sectionLockInput').value='';
-document.getElementById('sectionLockInput').focus();
+function sendSuggest(e){
+e.preventDefault();
+let name=document.getElementById('suggestName').value.trim();
+let topic=document.getElementById('suggestTopic').value;
+let txt=document.getElementById('suggestText').value.trim();
+if(!txt) return alert('Təklifini yaz, boş göndərmə 😊');
+let msg='💡 YENİ TƏKLİF - Dükkan Proqramı\n\n';
+if(name) msg+='👤 Ad: '+name+'\n';
+msg+='📌 Mövzu: '+topic+'\n';
+msg+='📝 Təklif: '+txt;
+let url='https://wa.me/994558001601?text='+encodeURIComponent(msg);
+window.open(url,'_blank');
+document.getElementById('suggestText').value='';
+alert('WhatsApp açıldı ✅\nOrda sadəcə Göndər bas, mənə çatsın!');
 }
-}
-function cancelUnlock(){ pendingSection=''; document.getElementById('sectionLockModal').classList.remove('show'); }
-function showHint(){
-let h = sectionHint[pendingSection]||'';
-if(!h) return alert('Bu bölmə üçün ipucu qoyulmayıb.');
-document.getElementById('lockHint').innerText = '💡 İpucu: ' + h;
-document.getElementById('lockHint').style.display='block';
-}
-function lockAllSections(){ Object.keys(sectionPass).forEach(k=>{ if(sectionPass[k]) sectionUnlocked[k]=false; }); alert('Hamısı bağlandı 🔒'); renderPassList(); }
-function unlockAllForNow(){ let any=false; Object.keys(sectionPass).forEach(k=>{ if(sectionPass[k]){ sectionUnlocked[k]=true; any=true; } }); if(!any) alert('Heç bir bölmədə şifrə yoxdur'); else alert('Hamısı bu dəfəlik açıldı ✅'); renderPassList(); }
-function updateRecoveryUI(){
-let el=document.getElementById('recoveryStatus');
-if(recoveryWord){ el.innerHTML='✅ Gizli Söz qoyulub. Şifrəni unutsan, Gizli Sözlə bərpa edə biləcəksən. Gizli Sözü heç kimə demə!'; el.style.color='#16a34a'; }
-else { el.innerHTML='⚠️ Hələ Gizli Söz qoymamısan. Şifrəni unutsan bərpa edə bilməyəcəksən! İndi qoy.'; el.style.color='#dc2626'; }
-}
-function saveRecoveryWord(){
-let v=document.getElementById('recoveryInput').value.trim();
-if(v.length<3) return alert('Gizli Söz ən azı 3 hərf olmalıdır! Məs: anamın adı');
-recoveryWord=v.toLowerCase();
-localStorage.setItem('recovery_word', recoveryWord);
-document.getElementById('recoveryInput').value='';
-alert('Gizli Söz yadda saxlanıldı ✅\nŞifrəni unutsan, bu sözlə bərpa edəcəksən. Unutma: ' + v);
-updateRecoveryUI();
-}
-function changeRecoveryWord(){
-let oldP=prompt('Köhnə Gizli Sözü yaz:');
-if(oldP===null) return;
-if(oldP.trim().toLowerCase()!==recoveryWord) return alert('Köhnə Gizli Söz səhvdir!');
-let np=prompt('Yeni Gizli Söz yaz:');
-if(!np || np.trim().length<3) return alert('Ən azı 3 hərf olmalıdır!');
-recoveryWord=np.trim().toLowerCase();
-localStorage.setItem('recovery_word', recoveryWord);
-alert('Gizli Söz dəyişdirildi ✅');
-updateRecoveryUI();
-}
-function forgotOneSection(){
-if(!recoveryWord) return alert('Gizli Söz qoyulmayıb!\nƏvvəlcə Şifrə Ayarları-na girib Gizli Söz qoy. O olmadan şifrəni bərpa etmək olmur.');
-recoverTarget = pendingSection;
-document.getElementById('recoverTitle').innerText = sectionNames[pendingSection] + ' - Bərpa Et';
-document.getElementById('recoverText').innerText = 'Gizli Sözü yaz, bu bölmənin şifrəsini sıfırlayım';
-document.getElementById('sectionLockModal').classList.remove('show');
-document.getElementById('recoverInput').value='';
-document.getElementById('recoverError').style.display='none';
-document.getElementById('recoverModal').classList.add('show');
-}
-function forgotAllWithRecovery(){
-if(!recoveryWord) return alert('Əvvəlcə Gizli Söz qoy! Yuxarıdakı xanaya yaz, Yadda Saxla bas.');
-recoverTarget='all';
-document.getElementById('recoverTitle').innerText='Bütün Şifrələri Sıfırla';
-document.getElementById('recoverText').innerText='Gizli Sözü yaz, bütün bölmələrin şifrəsini silim';
-document.getElementById('recoverInput').value='';
-document.getElementById('recoverError').style.display='none';
-document.getElementById('recoverModal').classList.add('show');
-}
-function confirmRecover(){
-let v=document.getElementById('recoverInput').value.trim().toLowerCase();
-if(v!==recoveryWord){ document.getElementById('recoverError').style.display='block'; return; }
-if(recoverTarget==='all'){
-sectionPass={}; sectionUnlocked={notes:false,salary:false,exp:false,personal:false};
-localStorage.setItem('section_pass', JSON.stringify(sectionPass));
-alert('✅ Bütün şifrələr silindi! İndi bütün bölmələr AÇIQdır 🔓\nİstəsən yenidən şifrə qoya bilərsən.');
-} else {
-delete sectionPass[recoverTarget];
-sectionUnlocked[recoverTarget]=false;
-localStorage.setItem('section_pass', JSON.stringify(sectionPass));
-alert('✅ ' + sectionNames[recoverTarget] + ' şifrəsi silindi! Bölmə indi AÇIQdır 🔓\nİstəsən yenidən şifrə qoya bilərsən.');
-}
-document.getElementById('recoverModal').classList.remove('show');
-pendingSection='';
-renderPassList();
-doShowTab('pass');
-}
-function closeRecover(){ document.getElementById('recoverModal').classList.remove('show'); }
-function toggleLockIcon(sec){
-let has = !!sectionPass[sec];
-if(!has){
-  pendingSetSection = sec;
-  document.getElementById('setPassIcon').innerText='🔓';
-  document.getElementById('setPassTitle').innerText = sectionNames[sec] + ' - Şifrə Təyin Et';
-  document.getElementById('setPassText').innerText = 'Bu bölməni bağlamaq üçün şifrə yaz. Sonra Yadda Saxla bas.';
-  document.getElementById('setPass1').value='';
-  document.getElementById('setPass2').value='';
-  document.getElementById('setPassHint').value='';
-  document.getElementById('setPassModal').classList.add('show');
-  setTimeout(()=>document.getElementById('setPass1').focus(),300);
-} else {
-  let p = prompt(sectionNames[sec] + ' şifrəlidir 🔒\nŞifrəni silmək və AÇIQ etmək üçün şifrəni yaz:');
-  if(p===null) return;
-  if(p.trim() !== sectionPass[sec]) return alert('❌ Şifrə səhvdir! Unutmusansa, "Şifrəni Unutdum" bas, Gizli Sözlə aç.');
-  if(!confirm(sectionNames[sec] + ' - şifrə silinsin? Bölmə yenə şifrəsiz - AÇIQ olacaq.')) return;
-  delete sectionPass[sec];
-  delete sectionHint[sec];
-  sectionUnlocked[sec]=false;
-  localStorage.setItem('section_pass', JSON.stringify(sectionPass));
-  localStorage.setItem('section_hint', JSON.stringify(sectionHint));
-  alert('✅ Şifrə silindi. Bölmə indi AÇIQdır 🔓');
-  renderPassList();
-}
-}
-function confirmSetPass(){
-let p1=document.getElementById('setPass1').value.trim();
-let p2=document.getElementById('setPass2').value.trim();
-let hint=document.getElementById('setPassHint').value.trim();
-if(p1.length<4) return alert('Şifrə ən azı 4 simvol olmalıdır!');
-if(p1!==p2) return alert('İki şifrə eyni deyil! Yenidən yaz.');
-if(!recoveryWord){
-  if(confirm('⚠️ Hələ Gizli Söz qoymamısan!\nŞifrəni unutsan bərpa edə bilməyəcəksən.\nİndi Gizli Söz qoymaq istəyirsən?')){
-    document.getElementById('setPassModal').classList.remove('show');
-    doShowTab('pass');
-    setTimeout(()=>{ document.getElementById('recoveryInput').focus(); alert('Yuxarıdakı Gizli Söz xanasına söz yaz, Yadda Saxla bas. Sonra yenidən şifrə qoy.'); },300);
-    return;
-  }
-}
-sectionPass[pendingSetSection]=p1;
-if(hint) sectionHint[pendingSetSection]=hint;
-sectionUnlocked[pendingSetSection]=false;
-localStorage.setItem('section_pass', JSON.stringify(sectionPass));
-localStorage.setItem('section_hint', JSON.stringify(sectionHint));
-document.getElementById('setPassModal').classList.remove('show');
-alert(sectionNames[pendingSetSection] + ' şifrələndi ✅\nİndi 🔒 BAĞLI-dır. Girəndə şifrə soruşulacaq.');
-renderPassList();
-}
-function closeSetPass(){ pendingSetSection=''; document.getElementById('setPassModal').classList.remove('show'); }
-function renderPassList(){
-let html='';
-Object.keys(sectionNames).forEach(sec=>{
-let has=!!sectionPass[sec];
-let icon = has ? '🔒' : '🔓';
-let bgClass = has ? 'lockedBg' : 'openBg';
-let rowClass = has ? 'locked' : 'open';
-let status = has ? '🔒 BAĞLI - Şifrəlidir. Girəndə şifrə soruşulur.' : '🔓 AÇIQ - Şifrəsizdir. İkona basıb şifrələ.';
-let statusColor = has ? '#dc2626' : '#16a34a';
-html+=`<div class="passRow ${rowClass}">
-<button class="lockIconBtn ${bgClass}" onclick="toggleLockIcon('${sec}')" title="Bas - şifrələ / aç">${icon}</button>
-<div class="passRowText"><b>${sectionNames[sec]}</b><span style="color:${statusColor};font-weight:700">${status}</span><br><span>İkona bas: ${has ? 'Şifrəni yaz → Sil → AÇIQ olur' : 'Şifrə yaz → Yadda Saxla → BAĞLI olur'}</span></div>
-<div class="passRowBtns">
-${has ? `<button class="passSmallBtn" onclick="changeSectionPass('${sec}')">🔑 Dəyiş</button>` : ``}
-${has ? `<button class="passSmallBtn" onclick="toggleLockIcon('${sec}')">🗑️ Şifrəni Sil</button>` : `<button class="passSmallBtn" style="background:#7c3aed;color:#fff;border-color:#7c3aed" onclick="toggleLockIcon('${sec}')">🔐 Şifrələ</button>`}
-</div>
-</div>`;
-});
-document.getElementById('passList').innerHTML=html;
-}
-function setSectionPass(sec){ toggleLockIcon(sec); }
-function changeSectionPass(sec){
-let oldP=prompt('Köhnə şifrəni yaz:');
-if(oldP===null) return;
-if(oldP!==sectionPass[sec]) return alert('Köhnə şifrə səhvdir!');
-pendingSetSection=sec;
-document.getElementById('setPassIcon').innerText='🔑';
-document.getElementById('setPassTitle').innerText = sectionNames[sec] + ' - Şifrəni Dəyiş';
-document.getElementById('setPassText').innerText = 'Yeni şifrəni yaz, Yadda Saxla bas.';
-document.getElementById('setPass1').value=''; document.getElementById('setPass2').value=''; document.getElementById('setPassHint').value=sectionHint[sec]||'';
-document.getElementById('setPassModal').classList.add('show');
-}
-function removeSectionPass(sec){ toggleLockIcon(sec); }
-function lockOneSection(sec){ sectionUnlocked[sec]=false; renderPassList(); }
 function openMenu(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show')}
 function closeMenu(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
 function toggleBox(id,arrow){document.getElementById(id).classList.toggle('open');let el=document.getElementById(arrow);el.innerText=el.innerText==='▼'?'▲':'▼'}
@@ -665,10 +430,17 @@ if(remindAt) alert('Qeyd yadda saxlanıldı ✅\n🔔 '+remindStr+' - də xatır
 function toggle(i){notes[i].done=!notes[i].done;if(notes[i].done){notes[i].doneAt=Date.now();}else{notes[i].doneAt=null;}localStorage.setItem('sade_notes',JSON.stringify(notes));render()}
 function del(i){if(confirm('Silinsin?')){notes.splice(i,1);localStorage.setItem('sade_notes',JSON.stringify(notes));render()}}
 function openEdit(i){
-editIdx=i; let n=notes[i];
+editIdx=i;
+let n=notes[i];
 document.getElementById('editTitle').value=n.title||'';
 document.getElementById('editText').value=n.text||'';
-if(n.remindAt){let d=new Date(n.remindAt);let y=d.getFullYear();let m=String(d.getMonth()+1).padStart(2,'0');let dd=String(d.getDate()).padStart(2,'0');let hh=String(d.getHours()).padStart(2,'0');let mm=String(d.getMinutes()).padStart(2,'0');document.getElementById('editRemind').value=y+'-'+m+'-'+dd+'T'+hh+':'+mm;} else {document.getElementById('editRemind').value='';}
+if(n.remindAt){
+let d=new Date(n.remindAt);
+let y=d.getFullYear();let m=String(d.getMonth()+1).padStart(2,'0');let dd=String(d.getDate()).padStart(2,'0');let hh=String(d.getHours()).padStart(2,'0');let mm=String(d.getMinutes()).padStart(2,'0');
+document.getElementById('editRemind').value=y+'-'+m+'-'+dd+'T'+hh+':'+mm;
+} else {
+document.getElementById('editRemind').value='';
+}
 document.getElementById('editModal').classList.add('show');
 }
 function closeEdit(){editIdx=-1;document.getElementById('editModal').classList.remove('show');}
@@ -678,9 +450,21 @@ let t=document.getElementById('editTitle').value.trim();
 let x=document.getElementById('editText').value.trim();
 let remindVal=document.getElementById('editRemind').value;
 if(!t && !x) return alert('Başlıq və ya yazı boş ola bilməz!');
-notes[editIdx].title=t||'Qeyd'; notes[editIdx].text=x;
-if(remindVal){notes[editIdx].remindAt=new Date(remindVal).getTime();notes[editIdx].remindStr=new Date(remindVal).toLocaleString('az-AZ');notes[editIdx].remindShown=false;} else {notes[editIdx].remindAt=null;notes[editIdx].remindStr='';notes[editIdx].remindShown=false;}
-localStorage.setItem('sade_notes',JSON.stringify(notes)); closeEdit(); render(); alert('Düzəliş yadda saxlanıldı ✅');
+notes[editIdx].title=t||'Qeyd';
+notes[editIdx].text=x;
+if(remindVal){
+notes[editIdx].remindAt=new Date(remindVal).getTime();
+notes[editIdx].remindStr=new Date(remindVal).toLocaleString('az-AZ');
+notes[editIdx].remindShown=false;
+} else {
+notes[editIdx].remindAt=null;
+notes[editIdx].remindStr='';
+notes[editIdx].remindShown=false;
+}
+localStorage.setItem('sade_notes',JSON.stringify(notes));
+closeEdit();
+render();
+alert('Düzəliş yadda saxlanıldı ✅'+(remindVal?'\n🔔 Yeni xatırlatma: '+notes[editIdx].remindStr:''));
 }
 function addPersonal(){
 let t=document.getElementById('personalTitle').value.trim();
@@ -689,26 +473,82 @@ if(!t && !x) return alert('Bir şey yaz!');
 personalNotes.unshift({title:t||'Şəxsi Qeyd',text:x,date:new Date().toLocaleString('az-AZ'),done:false});
 localStorage.setItem('personal_notes',JSON.stringify(personalNotes));
 document.getElementById('personalTitle').value='';document.getElementById('personalText').value='';
-renderPersonal(); alert('Şəxsi qeyd yadda saxlanıldı ✅');
+renderPersonal();
+alert('Şəxsi qeyd yadda saxlanıldı ✅');
 }
 function togglePersonal(i){personalNotes[i].done=!personalNotes[i].done;localStorage.setItem('personal_notes',JSON.stringify(personalNotes));renderPersonal();}
 function delPersonal(i){if(confirm('Şəxsi qeyd silinsin?')){personalNotes.splice(i,1);localStorage.setItem('personal_notes',JSON.stringify(personalNotes));renderPersonal();}}
-function openPersonalEdit(i){editPersonalIdx=i;let n=personalNotes[i];document.getElementById('editPersonalTitle').value=n.title||'';document.getElementById('editPersonalText').value=n.text||'';document.getElementById('editPersonalModal').classList.add('show');}
+function openPersonalEdit(i){
+editPersonalIdx=i;
+let n=personalNotes[i];
+document.getElementById('editPersonalTitle').value=n.title||'';
+document.getElementById('editPersonalText').value=n.text||'';
+document.getElementById('editPersonalModal').classList.add('show');
+}
 function closePersonalEdit(){editPersonalIdx=-1;document.getElementById('editPersonalModal').classList.remove('show');}
-function savePersonalEdit(){if(editPersonalIdx<0) return;let t=document.getElementById('editPersonalTitle').value.trim();let x=document.getElementById('editPersonalText').value.trim();if(!t && !x) return alert('Boş ola bilməz!');personalNotes[editPersonalIdx].title=t||'Şəxsi Qeyd';personalNotes[editPersonalIdx].text=x;localStorage.setItem('personal_notes',JSON.stringify(personalNotes));closePersonalEdit();renderPersonal();alert('Düzəliş yadda saxlanıldı ✅');}
+function savePersonalEdit(){
+if(editPersonalIdx<0) return;
+let t=document.getElementById('editPersonalTitle').value.trim();
+let x=document.getElementById('editPersonalText').value.trim();
+if(!t && !x) return alert('Boş ola bilməz!');
+personalNotes[editPersonalIdx].title=t||'Şəxsi Qeyd';
+personalNotes[editPersonalIdx].text=x;
+localStorage.setItem('personal_notes',JSON.stringify(personalNotes));
+closePersonalEdit();renderPersonal();alert('Düzəliş yadda saxlanıldı ✅');
+}
 function getAutoMs(){return ((autoCfg.month||0)*30 + (autoCfg.day||0))*24*60*60*1000 + (autoCfg.hour||0)*60*60*1000 + (autoCfg.min||0)*60*1000}
 function setAuto(){autoCfg={min:parseInt(document.getElementById('autoMin').value)||0,hour:parseInt(document.getElementById('autoHour').value)||0,day:parseInt(document.getElementById('autoDay').value)||0,month:parseInt(document.getElementById('autoMonth').value)||0};localStorage.setItem('autoDelCfg',JSON.stringify(autoCfg));updateAutoInfo();}
 function setQuickAuto(m,h,d,mo){document.getElementById('autoMin').value=m;document.getElementById('autoHour').value=h;document.getElementById('autoDay').value=d;document.getElementById('autoMonth').value=mo;setAuto();}
-function updateAutoInfo(){let ms=getAutoMs();if(ms===0){document.getElementById('autoInfo').innerHTML='🔒 Avto silmə bağlıdır';}else{let parts=[];if(autoCfg.month)parts.push(autoCfg.month+' ay');if(autoCfg.day)parts.push(autoCfg.day+' gün');if(autoCfg.hour)parts.push(autoCfg.hour+' saat');if(autoCfg.min)parts.push(autoCfg.min+' dəqiqə');document.getElementById('autoInfo').innerHTML='⏰ Tamamlanmış qeyd <b>'+parts.join(' ')+'</b> sonra silinəcək';}}
+function updateAutoInfo(){let ms=getAutoMs();if(ms===0){document.getElementById('autoInfo').innerHTML='🔒 Avto silmə bağlıdır - tamamlanmışlar qalır';}else{let parts=[];if(autoCfg.month)parts.push(autoCfg.month+' ay');if(autoCfg.day)parts.push(autoCfg.day+' gün');if(autoCfg.hour)parts.push(autoCfg.hour+' saat');if(autoCfg.min)parts.push(autoCfg.min+' dəqiqə');document.getElementById('autoInfo').innerHTML='⏰ Tamamlanmış qeyd <b>'+parts.join(' ')+'</b> sonra avtomatik silinəcək';}}
 function loadAutoInputs(){document.getElementById('autoMin').value=autoCfg.min||0;document.getElementById('autoHour').value=autoCfg.hour||0;document.getElementById('autoDay').value=autoCfg.day||0;document.getElementById('autoMonth').value=autoCfg.month||0;updateAutoInfo();}
 function checkAutoDelete(){let ms=getAutoMs();if(ms===0) return false;let now=Date.now();let changed=false;notes=notes.filter(n=>{if(n.done && n.doneAt && (now - n.doneAt >= ms)){changed=true;return false;}return true;});if(changed){localStorage.setItem('sade_notes',JSON.stringify(notes));render();}return changed;}
 function formatLeft(ms){if(ms<=0) return 'silinir...';let s=Math.floor(ms/1000);let d=Math.floor(s/86400);s%=86400;let h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60);let sec=s%60;if(d>0) return d+' gün '+h+' saat qaldı';if(h>0) return h+' saat '+m+' dəq qaldı';if(m>0) return m+' dəq '+sec+' san qaldı';return sec+' san qaldı';}
-function checkRemind(){let now=Date.now();let lastRemind=parseInt(localStorage.getItem('lastRemind24')||'0');if(now - lastRemind < 24*60*60*1000) return;let oldDone = notes.filter(n=> n.done && n.doneAt && (now - n.doneAt >= 24*60*60*1000));if(!oldDone.length) return;document.getElementById('remindText').innerHTML='Sizin <b>'+oldDone.length+' ədəd</b> tamamlanmış tapşırığınız var. Silim?';document.getElementById('remindList').innerHTML = oldDone.map(n=>'<div>✅ '+n.title+'</div>').join('');document.getElementById('remindModal').classList.add('show');}
+function checkRemind(){
+let now=Date.now();
+let lastRemind=parseInt(localStorage.getItem('lastRemind24')||'0');
+if(now - lastRemind < 24*60*60*1000) return;
+let oldDone = notes.filter(n=> n.done && n.doneAt && (now - n.doneAt >= 24*60*60*1000));
+if(!oldDone.length) return;
+document.getElementById('remindText').innerHTML='Sizin <b>'+oldDone.length+' ədəd</b> tamamlanmış və silinməmiş tapşırığınız var. 24 saatdan çoxdur qalıb. Silim?';
+document.getElementById('remindList').innerHTML = oldDone.map(n=>'<div>✅ '+n.title+' <span style="color:#999;font-size:12px">- '+n.date+'</span></div>').join('');
+document.getElementById('remindModal').classList.add('show');
+}
 function remindDeleteAll(){let now=Date.now();notes = notes.filter(n=> !(n.done && n.doneAt && (now - n.doneAt >= 24*60*60*1000)));localStorage.setItem('sade_notes',JSON.stringify(notes));localStorage.setItem('lastRemind24', String(now));document.getElementById('remindModal').classList.remove('show');render(); alert('Silindi ✅');}
 function remindKeep(){localStorage.setItem('lastRemind24', String(Date.now()));document.getElementById('remindModal').classList.remove('show');}
-function checkCustomerRemind(force){let now=Date.now();let due = notes.findIndex(n=> !n.done && n.remindAt && !n.remindShown && n.remindAt <= now);if(due===-1){if(force){let upcoming=notes.filter(n=>!n.done && n.remindAt);if(!upcoming.length) alert('Hələ xatırlatma yoxdur'); else alert('Gələcək xatırlatmalar:\n'+upcoming.map(n=>n.title+' - '+n.remindStr).join('\n'));}return;}currentCustIdx=due;let n=notes[due];document.getElementById('custTitle').innerText='🔔 Xatırlatma!';document.getElementById('custText').innerHTML='Qeyd etdiyin vaxt çatdı:<br><b>'+n.title+'</b>';document.getElementById('custList').innerHTML='<div><b>'+n.title+'</b><br>'+(n.text||'')+'<br><span style="color:#999">Xatırlatma: '+n.remindStr+'</span></div>';document.getElementById('snoozeAt').value='';document.getElementById('customerModal').classList.add('show');}
-function goToNote(){if(currentCustIdx<0) return;highlightIdx = currentCustIdx;document.getElementById('customerModal').classList.remove('show');filter='all';showTab('notes');setTimeout(()=>{let el=document.getElementById('note-'+highlightIdx);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});}}, 300);}
-function closeCustomerModal(done){if(currentCustIdx<0){document.getElementById('customerModal').classList.remove('show');return;}if(done){notes[currentCustIdx].done=true;notes[currentCustIdx].doneAt=Date.now();notes[currentCustIdx].remindShown=true;localStorage.setItem('sade_notes',JSON.stringify(notes));document.getElementById('customerModal').classList.remove('show');render();alert('Tamamlandı ✅');}else{let snoozeVal=document.getElementById('snoozeAt').value;let nextTime, nextStr;if(snoozeVal){nextTime=new Date(snoozeVal).getTime();if(nextTime < Date.now()){ alert('Seçdiyin tarix keçib! 1 saat sonraya qoydum.'); nextTime=Date.now()+60*60*1000; }nextStr=new Date(nextTime).toLocaleString('az-AZ');}else{nextTime=Date.now()+60*60*1000;nextStr=new Date(nextTime).toLocaleString('az-AZ');}notes[currentCustIdx].remindAt=nextTime;notes[currentCustIdx].remindStr=nextStr;notes[currentCustIdx].remindShown=false;localStorage.setItem('sade_notes',JSON.stringify(notes));document.getElementById('customerModal').classList.remove('show');render();alert('⏰ Sonra xatırladacam:\n'+nextStr);}}
+function checkCustomerRemind(force){
+let now=Date.now();
+let due = notes.findIndex(n=> !n.done && n.remindAt && !n.remindShown && n.remindAt <= now);
+if(due===-1){
+if(force){let upcoming=notes.filter(n=>!n.done && n.remindAt);if(!upcoming.length) alert('Hələ xatırlatma yoxdur'); else alert('Gələcək xatırlatmalar:\n'+upcoming.map(n=>n.title+' - '+n.remindStr).join('\n'));}
+return;
+}
+currentCustIdx=due;
+let n=notes[due];
+document.getElementById('custTitle').innerText='🔔 Xatırlatma!';
+document.getElementById('custText').innerHTML='Qeyd etdiyin vaxt çatdı:<br><b>'+n.title+'</b>';
+document.getElementById('custList').innerHTML='<div><b>'+n.title+'</b><br>'+(n.text||'')+'<br><span style="color:#999">Xatırlatma: '+n.remindStr+'</span></div>';
+document.getElementById('snoozeAt').value='';
+document.getElementById('customerModal').classList.add('show');
+}
+function goToNote(){
+if(currentCustIdx<0) return;
+highlightIdx = currentCustIdx;
+document.getElementById('customerModal').classList.remove('show');
+filter='all';
+showTab('notes');
+setTimeout(()=>{let el=document.getElementById('note-'+highlightIdx);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});}}, 300);
+}
+function closeCustomerModal(done){
+if(currentCustIdx<0){document.getElementById('customerModal').classList.remove('show');return;}
+if(done){notes[currentCustIdx].done=true;notes[currentCustIdx].doneAt=Date.now();notes[currentCustIdx].remindShown=true;localStorage.setItem('sade_notes',JSON.stringify(notes));document.getElementById('customerModal').classList.remove('show');render();alert('Tamamlandı ✅');}
+else{
+let snoozeVal=document.getElementById('snoozeAt').value;
+let nextTime, nextStr;
+if(snoozeVal){nextTime=new Date(snoozeVal).getTime();if(nextTime < Date.now()){ alert('Seçdiyin tarix keçib! 1 saat sonraya qoydum.'); nextTime=Date.now()+60*60*1000; }nextStr=new Date(nextTime).toLocaleString('az-AZ');}
+else{nextTime=Date.now()+60*60*1000;nextStr=new Date(nextTime).toLocaleString('az-AZ');}
+notes[currentCustIdx].remindAt=nextTime;notes[currentCustIdx].remindStr=nextStr;notes[currentCustIdx].remindShown=false;localStorage.setItem('sade_notes',JSON.stringify(notes));document.getElementById('customerModal').classList.remove('show');render();alert('⏰ Sonra xatırladacam:\n'+nextStr);
+}
+}
 function getNumbers(){return {daily:parseFloat(document.getElementById('daily').value)||0,days:parseFloat(document.getElementById('days').value)||0,adv:parseFloat(document.getElementById('advance').value)||0,bonus:parseFloat(document.getElementById('bonus').value)||0,fine:parseFloat(document.getElementById('fine').value)||0}}
 function calcPreview(){let n=getNumbers();let gross=n.daily*n.days;let total=gross-n.adv+n.bonus-n.fine;if(total<0)total=0;document.getElementById('pGross').innerText=gross.toFixed(2)+' ₼';document.getElementById('pAdv').innerText='- '+n.adv.toFixed(2)+' ₼';document.getElementById('pBonus').innerText='+ '+n.bonus.toFixed(2)+' ₼';document.getElementById('pFine').innerText='- '+n.fine.toFixed(2)+' ₼';document.getElementById('pTotal').innerText=total.toFixed(2)+' ₼';document.getElementById('pFormula').innerText='Formula: '+n.daily+' × '+n.days+' = '+gross.toFixed(2)+' | '+gross.toFixed(2)+' - '+n.adv+' + '+n.bonus+' - '+n.fine+' = '+total.toFixed(2)+' ₼';return {gross,total};}
 function saveSalary(){let name=document.getElementById('empName').value.trim();let n=getNumbers();if(!name)return alert('İşçinin adını yaz!');if(!n.daily||!n.days)return alert('Günlük maaş və günü yaz!');let c=calcPreview();let month=document.getElementById('month').value;let formula=n.daily+' × '+n.days+' = '+c.gross.toFixed(2)+' | '+c.gross.toFixed(2)+' - Avans '+n.adv+' + Bonus '+n.bonus+' - Cərimə '+n.fine+' = '+c.total.toFixed(2)+' ₼';if(!confirm(name+' - '+month+'\n'+formula+'\n\nBu düzgündür?'))return;salaries.unshift({name,month,daily:n.daily,days:n.days,adv:n.adv,bonus:n.bonus,fine:n.fine,gross:c.gross,total:c.total,formula,date:new Date().toLocaleString('az-AZ'),paid:false});localStorage.setItem('salaries_v1',JSON.stringify(salaries));document.getElementById('empName').value='';render();alert('Yadda saxlanıldı ✅');}
@@ -735,7 +575,9 @@ document.getElementById('monthBal').innerText=m.bal.toFixed(2)+' ₼';
 document.getElementById('allInc').innerText='+'+a.inc.toFixed(2)+' ₼';
 document.getElementById('allExp').innerText='-'+a.exp.toFixed(2)+' ₼';
 document.getElementById('allBal').innerText=a.bal.toFixed(2)+' ₼';
-document.getElementById('todayLabel').innerText='Bu gün: '+new Date().toLocaleDateString('az-AZ');
+document.getElementById('todayLabel').innerText='Bu gün: '+new Date().toLocaleDateString('az-AZ')+' • 00:00-dan sonra yeni gün 0 ilə başlayır';
+document.getElementById('cExpToday').innerText='(Qalıq '+t.bal.toFixed(0)+' ₼)';
+document.getElementById('cExpMonth').innerText='(Qalıq '+m.bal.toFixed(0)+' ₼)';
 let fM=document.getElementById('filterMonth').value;
 let fC=document.getElementById('filterCat').value;
 let fT=document.getElementById('filterType').value;
@@ -748,7 +590,7 @@ if(fT!=='all' && e.type!==fT) return false;
 return (e.title+e.note+e.cat).toLowerCase().includes(q);
 });
 let s=calcSums(list);
-if(rangeActive){document.getElementById('rangeResult').innerHTML='📅 <b>'+rangeFrom.split('-').reverse().join('.')+' - '+rangeTo.split('-').reverse().join('.')+'</b><br>🟢 Gəlir: <b style="color:#16a34a">+'+s.inc.toFixed(2)+' ₼</b> • 🔴 Xərc: <b style="color:#dc2626">-'+s.exp.toFixed(2)+' ₼</b> • 💰 Qalıq: <b>'+s.bal.toFixed(2)+' ₼</b>';} else { document.getElementById('rangeResult').innerHTML=''; }
+if(rangeActive){document.getElementById('rangeResult').innerHTML='📅 <b>'+rangeFrom.split('-').reverse().join('.')+' - '+rangeTo.split('-').reverse().join('.')+'</b><br>🟢 Gəlir: <b style="color:#16a34a">+'+s.inc.toFixed(2)+' ₼</b> • 🔴 Xərc: <b style="color:#dc2626">-'+s.exp.toFixed(2)+' ₼</b> • 💰 Qalıq: <b>'+s.bal.toFixed(2)+' ₼</b> • '+list.length+' əməliyyat';} else { document.getElementById('rangeResult').innerHTML=''; }
 document.getElementById('expList').innerHTML = list.length? '<div style="margin-top:12px;font-size:13px;color:#666">Göstərilən: 🟢 Gəlir <b style="color:#16a34a">+'+s.inc.toFixed(2)+' ₼</b> • 🔴 Xərc <b style="color:#dc2626">-'+s.exp.toFixed(2)+' ₼</b> • 💰 Qalıq <b>'+s.bal.toFixed(2)+' ₼</b></div>' + list.map(e=>{let idx=expenses.indexOf(e);let isInc=e.type==='income';return `<div class="expCard" style="border-left:4px solid ${isInc?'#22c55e':'#dc2626'}"><div><b>${isInc?'🟢 ':'🔴 '}${e.title}</b><small>${e.cat} • ${e.date} • ${e.time} ${e.note? ' • '+e.note:''}</small></div><div style="text-align:right"><div class="expAmt" style="color:${isInc?'#16a34a':'#dc2626'}">${isInc?'+':'-'}${e.amount.toFixed(2)} ₼</div><button class="delBtn" style="padding:6px 10px;margin-top:4px" onclick="delExp(${idx})">Sil</button></div></div>`}).join('') : '<div class="empty">Bu filterdə heç nə yoxdur</div>';
 }
 function render(){
@@ -766,10 +608,9 @@ function renderPersonal(){
 let q=(document.getElementById('searchPersonal').value||'').toLowerCase();
 let filtered=personalNotes.filter(n=>(n.title+n.text).toLowerCase().includes(q));
 document.getElementById('cPersonal').innerText='('+personalNotes.length+')';
-document.getElementById('personalList').innerHTML=!filtered.length?'<div class="empty">Hələ şəxsi qeyd yoxdur</div>':filtered.map(n=>{let idx=personalNotes.indexOf(n);return `<div class="note personal ${n.done?'done':''}"><h3>💜 ${n.title} ${n.done?'✅':''}</h3><p>${n.text}</p><small>${n.date}</small><div class="btns">${n.done?`<button class="backBtn" onclick="togglePersonal(${idx})">↩ Geri Qaytar</button>`:`<button class="okBtn" onclick="togglePersonal(${idx})">✅ Tamamlandı</button>`}<button class="editBtn" onclick="openPersonalEdit(${idx})">✏️ Düzəliş</button><button class="delBtn" onclick="delPersonal(${idx})">Sil</button></div></div>`}).join('');
+document.getElementById('personalList').innerHTML=!filtered.length?'<div class="empty">Hələ şəxsi qeyd yoxdur</div>':filtered.map(n=>{let idx=personalNotes.indexOf(n);return `<div class="note personal ${n.done?'done':''}"><h3>${n.title} ${n.done?'✅':''}</h3><p>${n.text}</p><small>${n.date}</small><div class="btns"><button class="okBtn" style="background:${n.done?'#f59e0b':'#7c3aed'}" onclick="togglePersonal(${idx})">${n.done?'↩ Geri Qaytar':'✅ Tamamlandı'}</button><button class="editBtn" style="background:#7c3aed" onclick="openPersonalEdit(${idx})">✏️ Düzəliş</button><button class="delBtn" onclick="delPersonal(${idx})">Sil</button></div></div>`}).join('');
 }
-document.getElementById('sectionLockInput').addEventListener('keydown', function(e){ if(e.key==='Enter') doUnlockSection(); });
-loadAutoInputs();calcPreview();render();renderExp();renderPersonal();renderPassList();updateRecoveryUI();
+loadAutoInputs();calcPreview();render();renderExp();renderPersonal();
 setTimeout(()=>{checkRemind();checkCustomerRemind(false);}, 800);
 setInterval(()=>{ checkCustomerRemind(false); if(checkAutoDelete()){} else { let autoMs=getAutoMs(); if(autoMs>0 && notes.some(n=>n.done)) render(); } }, 10000);
 </script>
